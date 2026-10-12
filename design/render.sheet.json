@@ -1,0 +1,568 @@
+{
+  "schemaVersion": 1,
+  "component": "fpv-world-renderer",
+  "targetMindustry": "160.5",
+  "state": "first-playable-implementation",
+  "descriptor": "fpv.generated.RenderConfig",
+  "generation": "Generate numeric public static final double fields using parameter names exactly. Renderer casts integer/float API values explicitly. This sheet owns prototype tuning; geometry arithmetic and coordinate-system identities stay in code.",
+  "verification": "design-verified",
+  "runtimeVerified": false,
+  "coordinates": {
+    "gameUnitsPerTile": 8,
+    "worldX": "gameX / 8",
+    "worldY": "altitude in tiles",
+    "worldZ": "-gameY / 8",
+    "tileCenter": "(tile.x, 0, -tile.y)"
+  },
+  "geometry": {
+    "chunkTiles": "parameters.CHUNK_TILES",
+    "terrain": "Native runtime atlas floor variants, tiled/autotiled patterns and transparent ore overlays; full-map coarse coverage",
+    "walls": "Textured extruded natural walls with hidden internal faces removed; native autotile, seeded variants and large 2x2 split selection",
+    "buildings": "Every physically placed Tile.build anchor, including sleeping, disabled, unpowered and non-updating blocks; existing solids with native atlas tops and active drill, conveyor, turret, factory, power and core family adapters",
+    "units": "Native body/cell texture layers over readable oriented 3D forms",
+    "bullets": "Enlarged emissive projectile bodies/trails and full XYZ beam segments from CombatVisual snapshots; unsupported extant native bullet families retain explicit presentation-only adapters",
+    "unknownContent": "visible generic footprint with its mapColor",
+    "maximumViewDistanceTiles": "No atmospheric distance cutoff; map-sized camera frustum with bounded near-detail cache and streamed coarse coverage"
+  },
+  "parameters": [
+    {
+      "name": "CHUNK_TILES",
+      "value": 16,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "MAX_CACHED_CHUNKS",
+      "value": 256,
+      "verification": "design-verified",
+      "unit": "chunks"
+    },
+    {
+      "name": "STATIC_MESH_INITIAL_VERTICES",
+      "value": 16384,
+      "verification": "design-verified",
+      "unit": "vertices"
+    },
+    {
+      "name": "DYNAMIC_MESH_VERTICES",
+      "value": 48000,
+      "verification": "design-verified",
+      "unit": "vertices"
+    },
+    {
+      "name": "DETAIL_DISTANCE_TILES",
+      "value": 80,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "FOG_REFRESH_MILLIS",
+      "value": 300,
+      "verification": "design-verified",
+      "unit": "ms"
+    },
+    {
+      "name": "COARSE_FOG_CACHE_CHUNKS",
+      "value": 16384,
+      "verification": "design-verified",
+      "unit": "chunk masks"
+    },
+    {
+      "name": "UNDISCOVERED_R",
+      "value": 0.025,
+      "verification": "design-verified"
+    },
+    {
+      "name": "UNDISCOVERED_G",
+      "value": 0.03,
+      "verification": "design-verified"
+    },
+    {
+      "name": "UNDISCOVERED_B",
+      "value": 0.045,
+      "verification": "design-verified"
+    },
+    {
+      "name": "BUILD_FOOTPRINT_SCALE",
+      "value": 0.93,
+      "verification": "design-verified"
+    },
+    {
+      "name": "BUILD_TEAM_TINT",
+      "value": 0.18,
+      "verification": "design-verified"
+    },
+    {
+      "name": "BUILD_ACCENT_SCALE",
+      "value": 0.73,
+      "verification": "design-verified"
+    },
+    {
+      "name": "BUILD_ACCENT_BRIGHTNESS",
+      "value": 0.62,
+      "verification": "design-verified"
+    },
+    {
+      "name": "BUILD_ACCENT_HEIGHT",
+      "value": 0.012,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "CORE_PLINTH_HEIGHT_FRACTION",
+      "value": 0.22,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CORE_ROOF_HEIGHT_FRACTION",
+      "value": 0.95,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CORE_ROOF_THICKNESS_FRACTION",
+      "value": 0.06,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CORE_CHAMBER_WIDTH_FRACTION",
+      "value": 0.48,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CORE_CHAMBER_HEIGHT_FRACTION",
+      "value": 0.68,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CORE_PYLON_WIDTH_FRACTION",
+      "value": 0.24,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CORE_PYLON_HEIGHT_FRACTION",
+      "value": 0.65,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CORE_PYLON_OFFSET_FRACTION",
+      "value": 0.34,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CORE_PANEL_WIDTH_FRACTION",
+      "value": 0.14,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CORE_GLOW_FRACTION",
+      "value": 0.32,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CORE_DARK_FRACTION",
+      "value": 0.55,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CORE_METAL_R",
+      "value": 0.53,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CORE_METAL_G",
+      "value": 0.56,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CORE_METAL_B",
+      "value": 0.6,
+      "verification": "design-verified"
+    },
+    {
+      "name": "WALL_HEIGHT_BASE",
+      "value": 1.4,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "WALL_HEIGHT_PER_SIZE",
+      "value": 0.25,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FLAT_HEIGHT_BASE",
+      "value": 0.22,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "FLAT_HEIGHT_PER_SIZE",
+      "value": 0.12,
+      "verification": "design-verified"
+    },
+    {
+      "name": "TURRET_HEIGHT_BASE",
+      "value": 0.65,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "TURRET_HEIGHT_PER_SIZE",
+      "value": 0.2,
+      "verification": "design-verified"
+    },
+    {
+      "name": "POWER_HEIGHT_BASE",
+      "value": 0.6,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "POWER_HEIGHT_PER_SIZE",
+      "value": 0.23,
+      "verification": "design-verified"
+    },
+    {
+      "name": "GENERIC_HEIGHT_BASE",
+      "value": 0.5,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "GENERIC_HEIGHT_PER_SIZE",
+      "value": 0.38,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_BUILD_HEIGHT",
+      "value": 3.5,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "UNIT_MIN_SIZE",
+      "value": 0.35,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "UNIT_HIT_SIZE_SCALE",
+      "value": 0.65,
+      "verification": "design-verified"
+    },
+    {
+      "name": "UNIT_GROUND_OFFSET",
+      "value": 0.22,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "UNIT_HEIGHT_PER_SIZE",
+      "value": 0.3,
+      "verification": "design-verified"
+    },
+    {
+      "name": "UNIT_FLIGHT_HEIGHT",
+      "value": 1.6,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "BULLET_MIN_SIZE",
+      "value": 0.18,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "BULLET_MAX_SIZE",
+      "value": 1.2,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "BULLET_HIT_SIZE_SCALE",
+      "value": 0.6,
+      "verification": "design-verified"
+    },
+    {
+      "name": "BULLET_HEIGHT",
+      "value": 0.6,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "BRIDGE_CLEARANCE",
+      "value": 0.24,
+      "verification": "design-verified",
+      "unit": "tiles above intervening surface"
+    },
+    {
+      "name": "BRIDGE_DECK_THICKNESS",
+      "value": 0.12,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "BRIDGE_MIN_WIDTH",
+      "value": 0.32,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "BRIDGE_MAX_WIDTH",
+      "value": 0.9,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "BRIDGE_ARROW_SPACING",
+      "value": 1.15,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "BRIDGE_MAX_ARROWS",
+      "value": 32,
+      "verification": "design-verified"
+    },
+    {
+      "name": "BRIDGE_MAX_SURFACE_SAMPLES",
+      "value": 512,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COMBAT_MIN_PIXELS",
+      "value": 2.5,
+      "verification": "design-verified",
+      "unit": "pixels at nominal viewport"
+    },
+    {
+      "name": "COMBAT_WIDTH_SCALE",
+      "value": 1.8,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COMBAT_BEAM_MIN_WIDTH",
+      "value": 0.14,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "COMBAT_MAX_TRAIL",
+      "value": 7,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "COMBAT_NATIVE_BULLET_CACHE",
+      "value": 8192,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COMBAT_MAX_FOG_SAMPLES",
+      "value": 512,
+      "verification": "design-verified"
+    },
+    {
+      "name": "OUTLINE_WIDTH",
+      "value": 0.045,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "SELECTION_HEIGHT_OFFSET",
+      "value": 0.055,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "PLAN_HEIGHT_OFFSET",
+      "value": 0.07,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "PROJECT_HEIGHT_OFFSET",
+      "value": 0.1,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "PICK_DISTANCE_SCALE",
+      "value": 1.5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "PICK_SURFACE_EPSILON",
+      "value": 0.0002,
+      "verification": "design-verified",
+      "unit": "tiles"
+    },
+    {
+      "name": "FACE_BOTTOM_SHADE",
+      "value": 0.4,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FACE_FRONT_SHADE",
+      "value": 0.74,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FACE_RIGHT_SHADE",
+      "value": 0.58,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FACE_BACK_SHADE",
+      "value": 0.5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FACE_LEFT_SHADE",
+      "value": 0.84,
+      "verification": "design-verified"
+    },
+    {
+      "name": "ATLAS_ALPHA_CUTOFF",
+      "value": 0.08,
+      "verification": "design-verified"
+    },
+    {
+      "name": "ATLAS_STREAM_VERTICES",
+      "value": 49152,
+      "verification": "design-verified"
+    },
+    {
+      "name": "ATLAS_SURFACE_OFFSET",
+      "value": 0.018,
+      "verification": "design-verified"
+    },
+    {
+      "name": "DETAIL_CACHE_BYTES",
+      "value": 67108864,
+      "verification": "design-verified"
+    },
+    {
+      "name": "DETAIL_UPLOADS_PER_FRAME",
+      "value": 6,
+      "verification": "design-verified"
+    },
+    {
+      "name": "DRILL_HEAD_WIDTH",
+      "value": 0.54,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FACTORY_VENT_HEIGHT",
+      "value": 0.24,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FACTORY_VENT_WIDTH",
+      "value": 0.23,
+      "verification": "design-verified"
+    },
+    {
+      "name": "OVERVIEW_MAX_CELLS",
+      "value": 32768,
+      "verification": "design-verified"
+    },
+    {
+      "name": "OVERVIEW_MIN_STRIDE",
+      "value": 4,
+      "verification": "design-verified"
+    },
+    {
+      "name": "POWER_LINK_WIDTH",
+      "value": 0.035,
+      "verification": "design-verified"
+    },
+    {
+      "name": "WATER_RIPPLE_SPEED",
+      "value": 0.9,
+      "verification": "design-verified"
+    },
+    {
+      "name": "WATER_RIPPLE_STRENGTH",
+      "value": 0.08,
+      "verification": "design-verified"
+    },
+    {
+      "verification": "design-verified",
+      "value": 16384,
+      "name": "SHIELD_BUFFER_VERTICES"
+    },
+    {
+      "verification": "design-verified",
+      "value": 128,
+      "name": "SHIELD_MAX_SIDES"
+    },
+    {
+      "verification": "design-verified",
+      "value": 6,
+      "name": "SHIELD_LATITUDE_SEGMENTS"
+    },
+    {
+      "verification": "design-verified",
+      "value": 0.035,
+      "name": "SHIELD_FILL_ALPHA"
+    },
+    {
+      "verification": "design-verified",
+      "value": 0.32,
+      "name": "SHIELD_EDGE_ALPHA"
+    },
+    {
+      "verification": "design-verified",
+      "value": 0.16,
+      "name": "SHIELD_FLASH_ALPHA"
+    },
+    {
+      "verification": "design-verified",
+      "value": 0.0018,
+      "name": "SHIELD_EDGE_RADIUS_FRACTION"
+    }
+  ],
+  "picking": {
+    "method": "perspective ray versus visible block boxes and map ground plane; DDA traversal bounded by map width plus height",
+    "returns": "hit point in game units and selected tile",
+    "multiBlock": "box footprint and center use Building.x/y and Block.size",
+    "fog": "unseen blocks cannot be picked as geometry"
+  },
+  "terrain03": "Natural walls use TerrainElevation corner heights and matching SW-SE-NE / SW-NE-NW triangles, with exterior cliffs to flat unchanged open tiles. Detailed and overview passes show terrain; raycast uses matching triangle/cliff intersections, collision queries identical field. World terrain revision invalidates cached chunks. Frustum bounds include mountain altitude.",
+  "simulation": "read only; no tile, entity, rules, inventory or save mutation",
+  "visibility": "Respect original building and unit fog checks and camera frustum; mask unexplored terrain. Placed building existence comes from canonical Tile.build attachments, never Groups.build, enabled, efficiency or isAdded. Groups.build is only the native simulation updater list and excludes sleeping and non-updating structures.",
+  "placedBuildingIndex": "Renderer-owned CPU index keyed by canonical anchor tile position. Seed once from all tiles on world identity changes/global invalidation; apply native tile events incrementally, including multiblock linked-cell events. Native world.tileChanges counter detects missed hooks and reseeds next render. Remove detached/dead/replaced references during rendering. Index memory is proportional to physically placed buildings, with no extra meshes or textures. Lifecycle clears on disposal/world replacement. Tile identity and anchor identity prevent stale old-world objects from rendering.",
+  "buildingVisibilityVerification": "Lab-only native fixtures cover conveyor, router, drill, factory, power node, battery, turret and non-updating large wall. Verify completed GPU submission while enabled-idle, disabled, unpowered, removed from updater by native sleep(), woken and distant LOD; verify native conveyor cargo movement, multiblock linked-edge removal, replacement and bootstrap discovery. Restore temporary native fixtures and Time.delta in finally. Submission telemetry proves the building geometry reached a successfully completed frame, not pixel-level visual acceptance.",
+  "lifecycle": "lazy OpenGL resources; depth-attached FrameBuffer composited before native HUD; explicit dispose; caller invalidates on tile/world changes",
+  "buildFeedback": "3D footprint outlines for hover selection, real queued BuildPlans, line plans and schematic selection",
+  "knownLimits": [
+    "Complex custom block DrawPart and native effect callbacks are not universally converted.",
+    "Coarse overview simplifies distant terrain and omits thin dynamic model details.",
+    "OVERVIEW_MAX_CELLS is a target, not a hard cap beyond 8,388,608 map tiles: the overview stride is capped at CHUNK_TILES (16).",
+    "If all 16,384 cached coarse fog chunks remain visible, additional uncached chunks show undiscovered terrain until cache capacity is available; ordinary maps up to 2048x2048 fit.",
+    "Floor transition edges and liquid shore blending remain approximate.",
+    "Combat families outside Combat3DSystem's explicit adapter coverage retain native XY damage/air-ground rules; their visual altitude is an approximation."
+  ],
+  "testResults": {
+    "scriptedRuntime": "passed on two native maps; see local/smoke/results.json",
+    "physicalPlaytest": "pending; overall runtimeVerified remains false until full acceptance"
+  },
+  "cachePolicy": "Frustum-visible detail candidates are pinned; bounded mesh bytes/count and per-frame upload budget. All other visible chunks stream a coarser material view without GPU allocation churn. Fog hashes invalidate only changed discovered chunks. Coarse fog visibility uses bounded per-chunk/stride CPU masks refreshed at FOG_REFRESH_MILLIS, not a tile scan each frame. World, team, discovered-Bits identity, fog-rule and global invalidation clear masks; tile invalidation clears affected masks. Admission evicts only chunks outside the frustum, at most one sweep per frame; capacity exhaustion is conservatively undiscovered.",
+  "buildingLod": "Beyond DETAIL_DISTANCE_TILES in 3D camera distance, visible buildings remain as extruded boxes with native roof/team sprites and real orientation. Conveyor connection shapes use static frame zero. Distant belt items, power links and detailed family geometry/animation are omitted.",
+  "materials": "TextureRegion UVs and Texture objects belong to Core.atlas; never copy to distributable or mutate native atlas filtering. Native art on low-poly surfaces, not claimed full model parity.",
+  "combatVisuals": "Combat3DSystem.visuals is authoritative canonical XYZ for managed PROJECTILE/BEAM/HIT samples. The renderer enlarges visible geometry only; it never changes physical collision radius or damage. Emissive vertex material avoids night-time dimming, preserves depth occlusion and gameplay fog. Beam basis uses full XYZ direction, including vertical rays. Unsupported native moving bullets use a cached owner-derived launch altitude and native XY trajectory; extant Laser/Continuous/Shrapnel/Rail/Sap/PointLaser families get segment visuals from native length/end data. Unsupported instant bullets that die inside init require a creation adapter and are not claimed universally captured.",
+  "combatVerification": "CombatVisibilitySmokeChecks frames real native-managed projectile/beam fixtures from both teams, including an exactly vertical beam, and requires every immutable visual ID to reach the completed GPU frame through the production geometry sink. The isolated helper captures combat.png before the integration harness retires fixtures. Submission is not pixel-level acceptance; screenshots are reviewed separately. Native fallback shots are independently queryable by bullet identity with wasNativeBulletSubmitted.",
+  "environment": "EnvironmentRenderer supplied separately; background inside private scene framebuffer before world passes, shared ambient illumination, gameplay fog retained.",
+  "coreMaterials": "All CoreBlock types retain the core family silhouette. Their own native region and correctly tinted team layer cover a thin upper roof, so the chamber cannot obscure the core sprite.",
+  "metrics": "Read-only Stats snapshot reports frustum-visible/detail/coarse chunk counts (including fog geometry), cached mesh count/bytes and last-frame CPU submission time. visibleChunks equals detailedChunks plus coarseChunks. CPU timing is not GPU timing or an FPS promise.",
+  "forceFields": "Read only per-instance ForceFieldAbility radiusScale and alpha through cached version-pinned reflection; public native radius/sides/rotation, unit.shield and shieldColor are authoritative. Positive shield with positive native radiusScale produces a polygonal closed translucent shell centered on physical unit altitude, including the controlled unit. Shell is cosmetic: native ForceFieldAbility absorption remains original XY and is not claimed to be an XYZ volume. Faint fill and brighter native-colored grid are depth tested, two sided, additive blended after opaque geometry with depth writes disabled. All touched GL state is restored. No fake shield for armor/personal shield points without this ability; broken shields disappear. Mesh storage is bounded and disposed, custom polygon sides are visually capped by SHIELD_MAX_SIDES.",
+  "controlledUnitVisibility": "Caller toggles only the actual controlled unit model through setShowControlledUnit. Hidden in first person by default; shield remains independent. Controlled model uses UnitAltitudeSystem.unitState physical position/yaw/pitch/roll, because ordinary pose deliberately excludes it. Native unit controller, hitbox, physics, shield and AI never change.",
+  "shieldCameraVerification": "NativeShieldCameraSmokeChecks creates one owned native Oct fixture, advances its actual ability animation, verifies shield submission from inside/outside and absence when broken without render-time shield/radius mutation. Captures shield-outside.png and shield-inside.png. It toggles current player model visibility and verifies completed GPU submissions and third-person.png without changing possession, then verifies map picking and high-altitude-720.png from720 tiles. Restores Time.delta, show flag and removes only its fixture.",
+  "highAltitudePicking": "Picking reaches the current camera frustum distance, including720-tile altitude, rather than a fixed horizontal map diagonal. Native tile DDA remains bounded by map dimensions.",
+  "policy": {
+    "maintenance011": "ShockMine capability uses the same slab height as a conveyor in native-textured rendering and CPU geometry. NaturalProps excludes ordinary StaticWall from decorative meshes, while native trees/shrubs/rock props use cached low-poly templates with deterministic variations and runtime native atlas art. Shared native Mech parts stay below their physical body center; Vela extends its own bilateral whole-leg art.",
+    "projectionDistance011": "Local camera XYZ/AABB distance and frustum select actual cached chunks or prebuilt per-wall surface ranges before GPU submission. Default max100tiles and fade80..100 are configurable; outside range geometry is not uploaded. Camera motion never rebuilds geometry. Authoritative protection/HP/regen/team rules are independent."
+  }
+}

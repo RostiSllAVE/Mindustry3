@@ -1,0 +1,178 @@
+{
+  "schemaVersion": 1,
+  "descriptor": "fpv.physics.CrashSystem / RammingCollision / ImpactModel / fpv.effects.RadialExplosion",
+  "verification": "design-verified",
+  "runtimeVerified": false,
+  "deferredSourceDeath": "A resolved impact remains owed to its enemy target if the controlled source dies during intervening native entity updates. Commit target trauma after native reconciliation without applying source damage twice or emitting a second custom crash burst. Captured source/target IDs guard native pooled-reference reuse. Root must call applyPending even when the source has just died.",
+  "feedback": "CrashSystem.lastFeedback exposes a monotonic sequence and immutable target name/id/team, actual native HP/shield before and after, attempted trauma, closing speed, friendly protection and killed status. HUD reports actual clamped health/shield loss rather than inferred formula damage. Reset clears current feedback but never rewinds the sequence. Native armor/shields and team rules stay authoritative.",
+  "ramHealthVerification": "Owned native flare-to-eclipse fixtures exercise actual Unit.damage with numeric before/after health, native shield absorption, friendly protection, altitude miss, safe contact and source killed between resolve/commit. No unit type stats, play save or global damage formulas are changed. Existing native movement/cooldown/paired-response regressions remain required.",
+  "nativeLifecycle": "Resolve collision, queue impact, reconcile original Unit.update through UnitMotionBridge, then applyPending native damage. Native death position is therefore resolved XY; custom burst stores the actual3D contact. Native cargo/wreck death effects remain original and may exceed the modest additional burst on large possessed units.",
+  "visualModel": "Owned bounded expanding flash sphere/sparks or pulse ring; same renderer for small and catastrophic magnitudes. Canonical XYZ at public gameplay entry; renderXYZ only at visual boundary.",
+  "heavyImpactTuning": "From 0.5, only masses above HEAVY_IMPACT_MASS_KG receive additional gameplay severity. Direct trauma multiplies by max(1,reducedMassKg/threshold)^HEAVY_TRAUMA_EXPONENT up to HEAVY_MAX_TRAUMA_MULTIPLIER; immovable contacts use own mass. The reported kinetic energy remains unmodified. Explosion radius and damage multiply separately by thresholded own-mass powers and respective maxima. Existing ordinary-unit formulas are unchanged below threshold. All results still obey caller limits and fixed absolute safety bounds of radius40/damage12000; no effect or friendly-fire API changes.",
+  "blastVolumes": "Explosion candidates use a bounded native tile rectangle with canonical building dedup, avoiding native circular center filters that omit large-block corners. Units are snapshotted from Groups.unit once per damage-bearing blast, since a physical sprite envelope may exceed its native XY hitbox. Unit falloff uses closest distance to the upright physical cylinder (radius and halfHeight from Unit3DState); the legacy height-only adapter uses native hitSize/2 as both envelope extents. Buildings use closest XYZ AABB distance with physical terrain base and surface top. Friendly entities are filtered before damage; native health/death APIs remain authoritative.",
+  "blastVerification": "Isolated native smoke creates/removes a temporary large wall and two flyers: low-radius corner graze must damage the wall, distant altitude must miss; horizontal and vertical body grazes damage the enemy flyer even outside center radius, overflight misses and friendly health stays unchanged. No native texture/UnitType/rule mutation.",
+  "ramResponse": "Fully inelastic normal impulse uses both gameplay masses. Physical response is separate from damage thresholds/cooldown and is queued even for safe, friendly and damage-disabled contacts. Each target impulse records its contact time; later fixed steps predict native position plus native velocity times elapsed plus each queued delta-velocity times elapsed since that contact. Target impulses commit after original entity simulation, per event, through World3DAdapter.addVelocity. Paired impulses are scaled together to the adapter's horizontal delta and vertical delta/final-speed limits. Ground Z is constrained by terrain support. Reset/possession change clears the ledger. This does not replace native passive XY separation or resolve arbitrary simultaneous multi-contact manifolds.",
+  "policy": "Canonical XYZ collision/damage queries wrap existing Y-up swept terrain solver. Native tile buildings persist independent of sleep. Swept expanded AABBs and relative ellipsoid segments detect building/unit rams including altitude misses. Impact energy uses closing normal speed and reduced gameplay mass; both participants take bounded trauma through native health/team APIs, friendly targets are protected but still obstruct player. Defer health mutation until native UnitMotionBridge reconciliation. Small bumps and pre-existing overlap cause no new trauma. Generic scalable XYZ blast uses unit mass/size/speed, finite magnitude caps and one burst per impact death. Native death effects remain separate. No Thorium Reactor code.",
+  "parameters": [
+    {
+      "name": "RADIUS_TILES",
+      "value": 0.22,
+      "verification": "design-verified"
+    },
+    {
+      "name": "SWEEP_STEP_TILES",
+      "value": 0.08,
+      "verification": "design-verified"
+    },
+    {
+      "name": "SAFE_SPEED_MPS",
+      "value": 3.5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "LETHAL_SPEED_MPS",
+      "value": 19.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "DAMAGE_COOLDOWN_SECONDS",
+      "value": 0.3,
+      "verification": "design-verified"
+    },
+    {
+      "name": "EXPLOSION_RADIUS_TILES",
+      "value": 2.5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "EXPLOSION_DAMAGE",
+      "value": 28.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "EXPLOSION_SECONDS",
+      "value": 0.65,
+      "verification": "design-verified"
+    },
+    {
+      "name": "EXPLOSION_VISUAL_RADIUS",
+      "value": 1.4,
+      "verification": "design-verified"
+    },
+    {
+      "name": "EXPLOSION_PARTICLES",
+      "value": 20,
+      "verification": "design-verified"
+    },
+    {
+      "name": "EXPLOSION_SOUND_VOLUME",
+      "value": 0.35,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_EFFECTS",
+      "value": 24,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RAM_DAMAGE_COEFFICIENT",
+      "value": 4,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_BLAST_RADIUS_TILES",
+      "value": 40,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_BLAST_DAMAGE",
+      "value": 12000,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEAVY_IMPACT_MASS_KG",
+      "value": 12.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEAVY_TRAUMA_EXPONENT",
+      "value": 0.25,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEAVY_MAX_TRAUMA_MULTIPLIER",
+      "value": 3.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEAVY_BLAST_RADIUS_EXPONENT",
+      "value": 0.3,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEAVY_MAX_BLAST_RADIUS_MULTIPLIER",
+      "value": 3.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEAVY_BLAST_DAMAGE_EXPONENT",
+      "value": 0.45,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEAVY_MAX_BLAST_DAMAGE_MULTIPLIER",
+      "value": 4.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_COLLIDER_RADIUS_TILES",
+      "value": 8,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_COLLIDER_HALF_HEIGHT",
+      "value": 4,
+      "verification": "design-verified"
+    },
+    {
+      "verification": "design-verified",
+      "value": 3000,
+      "name": "RAM_ORDINARY_DAMAGE_CAP"
+    },
+    {
+      "verification": "design-verified",
+      "value": 0,
+      "name": "RAM_ALPHA_DAMAGE_CAP"
+    },
+    {
+      "verification": "design-verified",
+      "value": 0,
+      "name": "RAM_BETA_DAMAGE_CAP"
+    },
+    {
+      "verification": "design-verified",
+      "value": 0,
+      "name": "RAM_GAMMA_DAMAGE_CAP"
+    },
+    {
+      "verification": "design-verified",
+      "value": 20000,
+      "name": "RAM_DAMAGE_CAP_MAX"
+    }
+  ],
+  "limitations": [
+    "Terrain footprint remains a sampled cylinder without overhangs; buildings use continuous expanded AABBs and units relative ellipsoids. Native combat weapons are not migrated.",
+    "Native cargo/wreck death consequences coexist with the new scaled blast.",
+    "Moving-unit broad phase includes native hitboxes and 320 tiles/sec approach padding; pathological external teleport/impulse beyond that is not a continuous collision guarantee.",
+    "Damage is gameplay energy with configurable coefficient, not an estimate of actual mechanical material failure."
+  ],
+  "acceptance": [
+    "Ground/vertical/cliff sweep does not tunnel at tested speeds; safe vs lethal thresholds and grazing distinction",
+    "Single crash death/effect at contact; enemy unit/build damage and friendly immunity",
+    "Thresholded heavy trauma/blasts exceed the previous same-speed magnitude while light/medium impacts preserve previous values and all absolute/caller caps hold",
+    "Build/pause/recover don't cause crash damage; ordinary native simulation and imported-save copy still load"
+  ],
+  "outgoingCaps": "Outgoing ram damage is min(physical trauma, configured cap), never a replacement flat amount. Ordinary default3000 HP; native Alpha/Beta/Gamma type caps eachdefault0. In enemy unit pairs each participant receives trauma limited by the OTHER unit outgoing cap, independent of which unordered-pair solver claims first. Terrain/building self-injury and all momentum exchange remain unchanged. Caps snapshot at contact on the authority.",
+  "sharedBurstBudget": "A collision owns a per-victim outgoing budget shared by direct target trauma and its additional XYZ death burst. Same victim cannot receive cap twice; other blast victims each receive at most the source cap with original distance falloff. Zero cap keeps cosmetic burst but skips damage APIs. Native unit/block health multipliers below1 conservatively reduce requested damage to prevent HP amplification. Armor/shields still use native calls. Native arbitrary mod death abilities are outside this custom budget.",
+  "coreDeathSafety": "For every collision-fatal unit, native spawnedByCore instance flag suppresses deferred cargo/wreck XY damage; survivors are not changed. Fatal instance shootOnDeath mounts get private Weapon copies with death/autofire disabled, retaining mount indexes and native shared content untouched. The additional bounded XYZ burst is the collision death damage. Arbitrary mod UnitType.killed/Ability.death effects and spawned child behavior remain native and outside this custom damage budget."
+}

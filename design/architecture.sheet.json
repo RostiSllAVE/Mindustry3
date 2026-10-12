@@ -1,0 +1,275 @@
+{
+  "schemaVersion": 1,
+  "status": "Incremental milestone0.10: native economy/grid plus authoritative spatial flight/combat, native textured walkers, shared capability-based possession, host-gated creator flight and nearest-surface projected shields. Matching-mod multiplayer required. Remaining roadmap concerns special abilities and Melty/Liftoff integration.",
+  "date": "2026-10-08",
+  "target": "Mindustry official Steam 160.5",
+  "coordinateConvention": "Public gameplay XYZ: native horizontal X/Y in tiles, Z altitude. Explicit render mapping (X,Z,-Y); original FlightController render-axis state adapted at boundary.",
+  "generationPlan": "Scoped flight/render/input/platform/runtime sheets generate typed profiles, constants and system descriptors before every build. This architecture sheet remains the broader roadmap.",
+  "verificationLegend": {
+    "request": "Explicit user requirement",
+    "source": "Verified in pinned upstream code or local metadata; not runtime-tested",
+    "proposed": "Engineering proposal awaiting implementation validation",
+    "pending": "Unresolved; must not pass build preflight"
+  },
+  "hooks": [
+    {
+      "id": "world",
+      "symbol": "Vars.world.tiles / WorldLoadEvent / TileChangeEvent",
+      "source": "https://github.com/Anuken/Mindustry/blob/v160.5/core/src/mindustry/core/World.java",
+      "verification": "source"
+    },
+    {
+      "id": "render",
+      "symbol": "Renderer.draw / Trigger.postDraw / ApplicationCore.modules",
+      "source": "https://github.com/Anuken/Mindustry/blob/v160.5/core/src/mindustry/core/Renderer.java",
+      "verification": "source"
+    },
+    {
+      "id": "input",
+      "symbol": "Control.setInput / DesktopInput / InputHandler",
+      "source": "https://github.com/Anuken/Mindustry/blob/v160.5/core/src/mindustry/input/DesktopInput.java",
+      "verification": "source"
+    },
+    {
+      "id": "pick",
+      "symbol": "Camera3D.getPickRay / World.toTile / block.offset",
+      "source": "https://github.com/Anuken/Arc/blob/8eb00ffff0/extensions/g3d/src/arc/graphics/g3d/Camera3D.java",
+      "verification": "source"
+    },
+    {
+      "id": "clock",
+      "symbol": "Logic.update / Time.setDeltaProvider / state.tick / AsyncCore",
+      "source": "https://github.com/Anuken/Mindustry/blob/v160.5/core/src/mindustry/core/Logic.java",
+      "verification": "source"
+    },
+    {
+      "id": "player",
+      "symbol": "PlayerComp / BuilderComp / DesktopInput.updateMovement",
+      "source": "https://github.com/Anuken/Mindustry/blob/v160.5/core/src/mindustry/entities/comp/BuilderComp.java",
+      "verification": "source"
+    },
+    {
+      "id": "melty",
+      "symbol": "search_games / game_info / validate_recipe / one_click_check",
+      "source": "https://melty.gg/api/mcp",
+      "verification": "source"
+    }
+  ],
+  "systems": [
+    {
+      "id": "simulation",
+      "descriptor": "SimulationBoundary",
+      "hookRefs": [
+        "world",
+        "player"
+      ],
+      "behavior": "Keep native maps/campaign/economy/production/research/tile construction and saves authoritative; migrate physical systems incrementally through explicit XYZ adapters rather than rewriting economic simulation.",
+      "acceptance": "Existing campaign and multiple maps load with original production/wave behavior and native build costs.",
+      "verification": {
+        "id": "proposed",
+        "descriptor": "proposed",
+        "hookRefs": "source",
+        "behavior": "request",
+        "acceptance": "proposed"
+      },
+      "runtimeVerified": false
+    },
+    {
+      "id": "renderer",
+      "descriptor": "RenderBridgePolicy",
+      "hookRefs": [
+        "render"
+      ],
+      "behavior": "Prove postDraw 3D spike, then verified world-render replacement preserving lifecycle and native UI.",
+      "acceptance": "Perspective world, intact HUD/menu/minimap, no lifecycle errors, production pass avoids redundant 2D draw.",
+      "verification": {
+        "id": "proposed",
+        "descriptor": "proposed",
+        "hookRefs": "source",
+        "behavior": "proposed",
+        "acceptance": "proposed"
+      },
+      "runtimeVerified": false
+    },
+    {
+      "id": "world_visuals",
+      "descriptor": "WorldVisualPolicy",
+      "hookRefs": [
+        "world",
+        "render"
+      ],
+      "behavior": "Chunked generic terrain/building representation; dynamic units/items/projectiles, fog; explicit visual-family fallbacks.",
+      "acceptance": "Several unrelated maps render and tile edits update the appropriate chunks; unseen content is not revealed.",
+      "verification": {
+        "id": "proposed",
+        "descriptor": "proposed",
+        "hookRefs": "source",
+        "behavior": "request",
+        "acceptance": "proposed"
+      },
+      "runtimeVerified": false
+    },
+    {
+      "id": "flight",
+      "descriptor": "FlightPhysicsProfile",
+      "hookRefs": [
+        "player",
+        "input"
+      ],
+      "behavior": "Original rigid-body FPV acro controller with throttle, angular rates, inertia, gravity, drag and motor response.",
+      "acceptance": "Centered rate input does not auto-level; deterministic fixed steps; no double integration of player motion.",
+      "verification": {
+        "id": "proposed",
+        "descriptor": "proposed",
+        "hookRefs": "source",
+        "behavior": "request",
+        "acceptance": "proposed"
+      },
+      "runtimeVerified": false
+    },
+    {
+      "id": "camera",
+      "descriptor": "FpvCameraProfile",
+      "hookRefs": [
+        "render",
+        "player"
+      ],
+      "behavior": "Camera follows quaternion attitude; configurable FOV and camera tilt; altitude is sidecar state.",
+      "acceptance": "Pitch/roll/yaw remain coherent with drone orientation through full rotations; valid near/far clipping.",
+      "verification": {
+        "id": "proposed",
+        "descriptor": "proposed",
+        "hookRefs": "source",
+        "behavior": "request",
+        "acceptance": "proposed"
+      },
+      "runtimeVerified": false
+    },
+    {
+      "id": "mode_input",
+      "descriptor": "InputModePolicy",
+      "hookRefs": [
+        "input",
+        "player"
+      ],
+      "behavior": "Flight captures mouse; Build releases mouse and holds pose; Menu/death/focus loss release capture safely.",
+      "acceptance": "No click-through, lost cursor, jump in rotation or stuck throttle across mode/focus transitions.",
+      "verification": {
+        "id": "proposed",
+        "descriptor": "proposed",
+        "hookRefs": "source",
+        "behavior": "request",
+        "acceptance": "proposed"
+      },
+      "runtimeVerified": false
+    },
+    {
+      "id": "building",
+      "descriptor": "BuildPickingPolicy",
+      "hookRefs": [
+        "input",
+        "pick",
+        "player"
+      ],
+      "behavior": "One perspective-picking adapter feeds native build queues, drag, rotation, demolition and configuration.",
+      "acceptance": "Single and multiblock placement, conveyor drag, demolition, bounds and UI occlusion; native resources/range preserved.",
+      "verification": {
+        "id": "proposed",
+        "descriptor": "proposed",
+        "hookRefs": "source",
+        "behavior": "request",
+        "acceptance": "proposed"
+      },
+      "runtimeVerified": false
+    },
+    {
+      "id": "build_time",
+      "descriptor": "BuildTimePolicy",
+      "hookRefs": [
+        "clock",
+        "input"
+      ],
+      "behavior": "Simulation-only 0/5/10/25/50/100 percent; 0 queues plans while paused; default10 proposed; restore prior pause context.",
+      "acceptance": "Production/waves/entities/campaign clocks agree at equal simulated intervals; responsive UI; correct recovery to100.",
+      "verification": {
+        "id": "proposed",
+        "descriptor": "proposed",
+        "hookRefs": "source",
+        "behavior": "request",
+        "acceptance": "proposed"
+      },
+      "runtimeVerified": false
+    },
+    {
+      "id": "distribution",
+      "descriptor": "DistributionPolicy",
+      "hookRefs": [
+        "melty"
+      ],
+      "behavior": "Native JVM mod using required installed Mindustry, own assets and allowed dependencies; Liftoff inspiration only.",
+      "acceptance": "Real archive inspection, valid legitimate host recipe, passing one_click_check, clean Melty install/launch and real gameplay media.",
+      "verification": {
+        "id": "proposed",
+        "descriptor": "proposed",
+        "hookRefs": "source",
+        "behavior": "proposed",
+        "acceptance": "proposed"
+      },
+      "runtimeVerified": false
+    }
+  ],
+  "decisions": [
+    {
+      "id": "first_release_mode",
+      "value": "Single-player and matching-mod server-authoritative multiplayer.",
+      "verification": "request"
+    },
+    {
+      "id": "production_render_hook",
+      "value": null,
+      "verification": "pending",
+      "question": "Verify reliable native-mod bridge before choosing any narrow source patch fallback."
+    },
+    {
+      "id": "unit_possession_policy",
+      "value": "Native unitControl validates possession. Flyers retain Acro/Stabilized/Build; grounded units use native movement capabilities and Q/E stance; ControlBlock turret proxies are stationary. Host-only Allow ground-unit flight defaults OFF; F8 requests a per-instance XYZ override and safe landing on release/revocation. Native unarmed units stay unarmed and noncontrollable categories remain explicit exceptions.",
+      "verification": "source"
+    },
+    {
+      "id": "physics_parameters",
+      "value": "Original profiles and runtime settings are versioned in flight/performance/navigation sheets; no Liftoff code.",
+      "verification": "source"
+    },
+    {
+      "id": "steam_profile_install_path",
+      "value": "Installed Steam content is read-only; play and isolated lab profiles under D:/Linux/MindustryFPV.",
+      "verification": "source"
+    },
+    {
+      "id": "melty_host_support",
+      "value": "blocked: custom-mindustry rejected as primary",
+      "verification": "source",
+      "question": "Await legitimate host support; do not substitute unrelated game tags."
+    },
+    {
+      "id": "license_and_remix",
+      "value": null,
+      "verification": "pending",
+      "question": "User choice before listing, constrained by included-code/dependency licenses."
+    }
+  ],
+  "preflight": {
+    "status": "Scoped implementation preflight plus separate runtime verification",
+    "reason": "tools/preflight.py validates scoped sheets. Broader renderer/input/Melty acceptance is not inferred from compilation or scripted gameplay.",
+    "mustCheck": [
+      "all scoped cells filled and design-verified",
+      "unique row IDs",
+      "all hookRefs resolve",
+      "descriptor names unique",
+      "all implementation parameters explicitly specified",
+      "runtime claims remain pending until exercised"
+    ]
+  },
+  "milestoneEvidence": "See docs/MILESTONE-0.10.md and local/smoke/verification.json for exact tested package, native maps/saves, native-art galleries, GPU pixel checks and actual server plus two-client receipts. Physical hardware input and exhaustive modded content remain separate acceptance.",
+  "longTermPhysicalGoal": "Terrain, controlled/flying/ground unit physical states, collision, explosions, distance, LOS, projectiles and weapon elevation progressively migrate to real XYZ. Original campaign, economy, crafting, conveyors, power, research, tiles and strategic goals remain native."
+}

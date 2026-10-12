@@ -1,0 +1,24 @@
+/research/
+/local/
+/lab/
+/play/
+/build/
+/dist/
+/lib/
+*.log
+*.tmp
+__pycache__/
+*.pyc
+
+# Public launcher profile and accidental local/private artifacts.
+/alpha-profile/
+/tools/alpha-profile/
+.env
+.env.*
+*.pem
+*.key
+*.msav
+*.etl
+*.jfr
+*.jar
+*.zip

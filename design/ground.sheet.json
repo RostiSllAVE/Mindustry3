@@ -1,0 +1,141 @@
+{
+  "schemaVersion": 1,
+  "descriptor": "fpv.units.ground.GroundFamilyLocomotion / GroundUnitProfiles / GroundLocomotionModel",
+  "verification": "design-verified",
+  "runtimeVerified": false,
+  "policy": {
+    "scope": "Crawler wheels plus every native Legsc ground unit. Purple-family leg counts, thickness and configured height limits remain explicit overrides. Vela alone gains an extensible two-foot native mech stance in 0.11; other native walkers derive reach and layout from their native properties; other mech, tracked, naval, hovering and flying units do not acquire walker stance.",
+    "sourceOfTruth": "Canonical Unit3DState body XYZ remains server authoritative. Grounded locomotion corrects native XY after native movement using bounded swept terrain checks and a single extension speed penalty. Per-instance creator flight supplies a separate runtime body provider and bypasses grounded updates only while physically airborne. No shared UnitType mutation.",
+    "extension": "Maximum clearance = normal stance plus configurable extra reach. AI/default clearance is clamp(0.5 * maximum clearance + stable per-unit offset in [1,3] tiles, normal stance, maximum clearance). Spawn rises smoothly to this target. Supporting ground is local physical terrain/structure height, never projected holograms. Obstacles can require higher extension within the same reach bound; impossible obstacles reject horizontal motion.",
+    "speed": "Speed fraction = 1 - (1 - minimumFraction) * normalizedExtension squared. Normal stance has no penalty. Native displacement is reduced once per simulation update without mutating global speed or status multipliers.",
+    "network": "Existing authoritative unit snapshots carry physical XYZ and angles. A bounded 48-byte settings channel carries four type extension limits and minimum speed fraction plus the green T4/T5 total-height multiplier. Other native leg reach uses the existing replicated projection leg-step multiplier; client preferences cannot change its authority. Clients do not run ground collision or modify native unit positions.",
+    "performance": "Cached native capability profiles by UnitType and tuning; reusable state per unit identity; fixed bounded support samples at native leg feet and swept body footprint. No physics rigidbody per limb. Stance/control state is independent of renderer cameras and view mode.",
+    "renderer": "Native textured thigh/shin/foot/joint artwork is posed using shared NativeLegLayout geometry and stable grounded foot targets. Existing purple counts and reusable Crawler wheels remain. Rendering consumes authoritative body height and does not add a second stance offset; airborne creator poses tuck legs rather than sampling ground feet.",
+    "nativeCliffs": "Before native entity update, capture only existing commanded velocity for selected legged family members. If native 2D tile solidity rejects that component, restore bounded original intent to the 3D grounded solver, which still rejects terrain or enabled projections beyond tier reach. Vela additionally compares native wall pushback with an exact native collision replay on one unadded scratch body. Matching tile pushback may be corrected; unrelated external motion is preserved. Native player/AI automatic elevation on a cleared solid tile is restored to the captured grounded value; explicit boost and creator flight remain intact. Never synthesize movement for stationary units. Native high-level AI routes remain unchanged.",
+    "legLayout": "Purple counts remain generated even integer rows within 2..8. Other actual Legsc units use native legCount, legLength/legLengthScl, hip offsets, straightness and flip configuration. Shared native layout supplies matching CPU support and GPU foot positions. Units are classified by native entity capability, not the default UnitType.legCount field.",
+    "manualStance": "Q/E change the possessed walker desired clearance at 4 tiles/second. Controlled zero-axis input holds the chosen value through Build mode and camera changes. Actual release selects the same stable AI/default target and the existing bounded vertical integrator returns smoothly; no free flight is added.",
+    "persistence": "Bounded native SaveVersion custom chunks preserve unit identity/type/team/XY guards, stable offset, requested stance and actual relative body clearance. Native SaveIO round-trip fixtures validate restored live authority, not only a byte codec. Creator body state is separately saved as XYZ, momentum, normalized attitude and original grounded elevation; loading forces safe descent rather than resuming unattended creator controls.",
+    "creatorLanding": "Creator flight is host-authorized and per-instance. Safe landing validates every tile intersecting the physical body disk and native leg-foot reach/support. Searches are cached and retried on relevant map edits, not every frame after failure. If no native-passable footprint exists, emergency descent restores native restrictions on a non-building physical surface (including native stranding/drowning behavior). A wholly obstructed artificial map uses a vulnerable movement-locked roof support with flying=false and no creator exhaust; edits opening a valid destination release this exceptional hold. Holograms never support a landing. Automatic descent uses the stabilized controller response time and available acceleration to bound braking speed independently of cruise speed. The final clearance snap is allowed only for gentle touchdown; physical terrain/body sweeps and damaging externally imposed high-speed impacts remain active.",
+    "greenWalkers": "Only Vela and Corvus multiply their existing configured total maximum standing clearance by 3 (host-configurable 1..8). Their original minimum stance, native leg footprint, gradual integration and extension speed penalty remain unchanged; other tiers and flyers receive no multiplier. Vela was a native Mechc with no configurable extension limit in 0.10, so its new baseline uses native mechStride and the existing host step multiplier; two native foot anchors and whole-leg artwork are preserved. Corvus uses the exact prior articulated profile maximum. Native Vela attack weapons temporarily mask only a false automatic elevation flag during their existing weapon update when canonical support is grounded; real boost/creator flight keeps native firing restrictions. The original flag is restored immediately afterward."
+  },
+  "parameters": [
+    {
+      "name": "ATRAX_WALL_HEIGHTS",
+      "value": 2,
+      "verification": "request"
+    },
+    {
+      "name": "SPIROCT_WALL_HEIGHTS",
+      "value": 4,
+      "verification": "request"
+    },
+    {
+      "name": "ARKYID_WALL_HEIGHTS",
+      "value": 8,
+      "verification": "request"
+    },
+    {
+      "name": "TOXOPID_WALL_HEIGHTS",
+      "value": 16,
+      "verification": "request"
+    },
+    {
+      "name": "MIN_EXTENDED_SPEED_FRACTION",
+      "value": 0.25,
+      "verification": "design-verified"
+    },
+    {
+      "name": "SPIDER_THICKNESS_MULTIPLIER",
+      "value": 2,
+      "verification": "request"
+    },
+    {
+      "name": "CRAWLER_THICKNESS_MULTIPLIER",
+      "value": 1.6,
+      "verification": "design-verified"
+    },
+    {
+      "name": "NORMAL_STANCE_PER_RADIUS",
+      "value": 0.35,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CRAWLER_STANCE_TILES",
+      "value": 0.12,
+      "verification": "design-verified"
+    },
+    {
+      "name": "SPIDER_FOOTPRINT_SCALE",
+      "value": 1.35,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CRAWLER_FOOTPRINT_SCALE",
+      "value": 0.85,
+      "verification": "design-verified"
+    },
+    {
+      "name": "EXTENSION_CLIMB_SPEED",
+      "value": 12,
+      "verification": "design-verified"
+    },
+    {
+      "name": "EXTENSION_DESCENT_SPEED",
+      "value": 9,
+      "verification": "design-verified"
+    },
+    {
+      "name": "SWEEP_STEP_TILES",
+      "value": 0.2,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CRAWLER_STEP_TILES",
+      "value": 0.18,
+      "verification": "design-verified"
+    },
+    {
+      "name": "ATRAX_LEG_COUNT",
+      "value": 4,
+      "verification": "request"
+    },
+    {
+      "name": "SPIROCT_LEG_COUNT",
+      "value": 6,
+      "verification": "request"
+    },
+    {
+      "name": "ARKYID_LEG_COUNT",
+      "value": 6,
+      "verification": "request"
+    },
+    {
+      "name": "TOXOPID_LEG_COUNT",
+      "value": 8,
+      "verification": "request"
+    },
+    {
+      "name": "GREEN_WALKER_HEIGHT_MULTIPLIER",
+      "value": 3,
+      "verification": "request"
+    }
+  ],
+  "tests": [
+    "family registry and exact leg/wheel counts",
+    "tier extension progression and configurable bounds",
+    "grounded obstacle traversal and impossible-step rejection",
+    "speed reduction at extension and recovery",
+    "settings codec rejects nonfinite/out-of-bounds/trailing input",
+    "unchanged flying-unit profile selection",
+    "all native Legsc capability coverage and unrelated family exclusion",
+    "stable default offset bounds and local-ground-relative clamp",
+    "smooth initial rise and manual hold / release to AI default",
+    "actual native SaveIO stance + creator body write/load restoration",
+    "bounded creator save records and rejected duplicate / malformed identities",
+    "temporary creator runtime provider skips grounded update and resumes physical ground handoff",
+    "Vela/Corvus only: exact 3x total maximum, manual clamp, support and slowdown; differing host/client multiplier",
+    "actual native AI and Player.update Vela wall traversal, stationary automatic-boost rejection and explicit boost preservation",
+    "actual charged Vela beam creation during native unit update above a solid wall; explicit boosted shooting remains prohibited",
+    "creator touchdown through actual stabilized integration and swept collision across Dagger/Atrax/Vela profiles, four presets, three time steps and low/high altitude; unrecoverable external fall still causes damaging contact"
+  ]
+}

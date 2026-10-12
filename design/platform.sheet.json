@@ -1,0 +1,117 @@
+{
+  "schemaVersion": 1,
+  "id": "windows-flight-input",
+  "descriptor": "fpv.platform.WindowsFlightInput",
+  "status": "native library initialized successfully on full portable Java17; physical mouse behavior awaits playtest",
+  "runtimeVerified": false,
+  "verificationLegend": {
+    "design-verified": "Explicit reviewed implementation contract; not evidence of tested native behavior.",
+    "source": "Verified against Microsoft API documentation.",
+    "runtime-pending": "Requires an intentional test in the game's own process."
+  },
+  "dependency": {
+    "artifact": "net.java.dev.jna:jna:5.19.1",
+    "licenseChoice": "Apache-2.0",
+    "verification": "design-verified",
+    "use": "JNA core only: Native, Pointer, Structure, IntByReference, StdCallLibrary. No JNA platform artifact, AWT, Robot, or java.desktop dependency.",
+    "runtime": "Complete Java17+ with java.logging. Tested bundled Steam Java25 is stripped and fails JNA initialization. Launch via D: portable Java17; do not advertise this JAR as stock-runtime drop-in."
+  },
+  "policies": [
+    {
+      "id": "native-temp",
+      "value": "Root must set jna.tmpdir to Vars.tmpDirectory.child(\"fpv-native\").absolutePath() on D: before constructing WindowsFlightInput or otherwise initializing JNA Native.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "foreground-owner",
+      "value": "GetForegroundWindow must return a non-minimized valid HWND whose GetWindowThreadProcessId PID equals ProcessHandle.current().pid(). Never request foreground, synthesize keys, install hooks, or manipulate another process/window.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "capture-entry",
+      "value": "An explicit setCaptured(true) request may capture only the verified own foreground HWND and only while the cursor is inside its client rectangle. Initial recentering yields zero mouse delta.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "clip-space",
+      "value": "GetClientRect coordinates convert via ClientToScreen for both corners. ClipCursor receives that screen-coordinate RECT. Client extent must be positive, including on monitors with negative coordinates.",
+      "verification": "source"
+    },
+    {
+      "id": "per-frame",
+      "value": "Call poll exactly once per game frame. If captured, read cursor offset from the last recenter position, then recenter within the same own foreground HWND. deltaX is positive right and deltaY positive down, in Win32 screen-coordinate pixels. Accessors never resample or consume deltas.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "resize",
+      "value": "Recalculate client screen bounds each captured poll. A moved/resized window gets a new clip and center; discard that frame's delta to avoid a view jump.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "release",
+      "value": "setCaptured(false), focus/window loss, native failure and close clear captured state/deltas and best-effort release only clipping still matching this instance's last applied RECT. If another owner has replaced the clip rectangle, leave it untouched.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "reacquire",
+      "value": "No automatic recapture after focus loss or error. The integration layer must issue a new explicit request when Flight mode and focus warrant it.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "visibility",
+      "value": "Cursor hiding/restoration belongs to the Arc integration layer. Do not use ShowCursor, whose global counters can become unbalanced.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "thread",
+      "value": "All methods run on the game's input/render thread. No background watcher, global mouse hook, window activation callback or separate input thread.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "failures",
+      "value": "Native loading may fail at construction. During use, native errors clear capture and are available through failure(); no per-frame exception escapes. close is idempotent. Root must call close on disposal and release before opening menus.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "limitations",
+      "value": "Cursor recentering is not raw input: OS pointer acceleration and DPI coordinates affect sensitivity, and exceptionally large per-frame movement can hit the clip edge. Focus checks precede mutations but Win32 has no atomic ownership-and-cursor operation. Multi-monitor, DPI, Alt-Tab, overlay and disposal behavior remain runtime tests.",
+      "verification": "design-verified"
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "own-focus",
+      "verification": "runtime-pending",
+      "criterion": "Construction/poll in the actual Mindustry process recognizes only its own foreground window; another foreground application's cursor is never captured or recentered."
+    },
+    {
+      "id": "flight-delta",
+      "verification": "runtime-pending",
+      "criterion": "Capture begins with zero deltas; one poll delivers stable positive-right/down deltas; repeated accessor calls return the same sample."
+    },
+    {
+      "id": "mode-focus-dispose",
+      "verification": "runtime-pending",
+      "criterion": "Build/Menu mode, focus loss, minimize and disposal release clipping and cursor visibility through the integration layer; no automatic recapture occurs."
+    },
+    {
+      "id": "move-resize-dpi",
+      "verification": "runtime-pending",
+      "criterion": "Window move/resize, negative-coordinate secondary monitor and mixed DPI do not create a camera jump or clip another window."
+    },
+    {
+      "id": "failure",
+      "verification": "runtime-pending",
+      "criterion": "Native failure clears capture/deltas and exposes a diagnostic; guarded cleanup does not replace another owner's clip rectangle."
+    }
+  ],
+  "sources": [
+    "https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-clipcursor",
+    "https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-getforegroundwindow",
+    "https://learn.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setcursorpos"
+  ],
+  "testResults": {
+    "nativeInitialization": "passed on full Java17 in actual Mindustry process",
+    "cursorCapture": "not exercised by scripted smoke"
+  }
+}

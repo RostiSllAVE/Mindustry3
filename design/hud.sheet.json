@@ -1,0 +1,314 @@
+{
+  "schemaVersion": 1,
+  "component": "native-simulation-fpv-osd",
+  "targetMindustry": "160.5",
+  "descriptor": "fpv.generated.HudConfig",
+  "generation": "Generate numeric public static final double fields from parameters. UI colors use unsigned RGBA8888 values converted through long to int. Other display numbers are unit conversions or geometry identities. metersPerTile is injected from the original flight profile, never redefined.",
+  "verification": "design-verified",
+  "runtimeVerified": false,
+  "visualStyle": "Original restrained off-white, cyan and amber flight instruments using Mindustry fonts; no Liftoff assets or copied layout.",
+  "parameters": [
+    {
+      "name": "REFERENCE_WIDTH",
+      "value": 1280,
+      "verification": "design-verified"
+    },
+    {
+      "name": "REFERENCE_HEIGHT",
+      "value": 800,
+      "verification": "design-verified"
+    },
+    {
+      "name": "EDGE_MARGIN",
+      "value": 34,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEADER_Y",
+      "value": 38,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEADER_SECOND_Y",
+      "value": 65,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COMPASS_WIDTH",
+      "value": 420,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COMPASS_Y",
+      "value": 78,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COMPASS_RANGE_DEGREES",
+      "value": 120,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COMPASS_TICK_DEGREES",
+      "value": 15,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COMPASS_LABEL_DEGREES",
+      "value": 30,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COMPASS_TICK_HEIGHT",
+      "value": 9,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COMPASS_LABEL_Y",
+      "value": 22,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HORIZON_WIDTH",
+      "value": 320,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HORIZON_HEIGHT",
+      "value": 210,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HORIZON_ALPHA",
+      "value": 0.65,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HORIZON_END_CAP",
+      "value": 5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RETICLE_GAP",
+      "value": 7,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RETICLE_ARM",
+      "value": 10,
+      "verification": "design-verified"
+    },
+    {
+      "name": "STROKE_WIDTH",
+      "value": 1.3,
+      "verification": "design-verified"
+    },
+    {
+      "name": "SMALL_FONT_SCALE",
+      "value": 0.72,
+      "verification": "design-verified"
+    },
+    {
+      "name": "LABEL_FONT_SCALE",
+      "value": 0.85,
+      "verification": "design-verified"
+    },
+    {
+      "name": "VALUE_FONT_SCALE",
+      "value": 2.6,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MODE_FONT_SCALE",
+      "value": 0.95,
+      "verification": "design-verified"
+    },
+    {
+      "name": "READOUT_BOTTOM",
+      "value": 168,
+      "verification": "design-verified"
+    },
+    {
+      "name": "READOUT_LABEL_GAP",
+      "value": 42,
+      "verification": "design-verified"
+    },
+    {
+      "name": "READOUT_DETAIL_GAP",
+      "value": 23,
+      "verification": "design-verified"
+    },
+    {
+      "name": "TELEMETRY_BOTTOM",
+      "value": 96,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RESOURCE_BOTTOM",
+      "value": 56,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HELP_BOTTOM",
+      "value": 25,
+      "verification": "design-verified"
+    },
+    {
+      "name": "THROTTLE_WIDTH",
+      "value": 230,
+      "verification": "design-verified"
+    },
+    {
+      "name": "THROTTLE_HEIGHT",
+      "value": 5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "THROTTLE_BOTTOM",
+      "value": 150,
+      "verification": "design-verified"
+    },
+    {
+      "name": "THROTTLE_LABEL_GAP",
+      "value": 22,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEALTH_BAR_WIDTH",
+      "value": 150,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEALTH_BAR_HEIGHT",
+      "value": 3,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEALTH_BAR_OFFSET",
+      "value": 20,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEALTH_WARNING_FRACTION",
+      "value": 0.3,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RESOURCE_ICON_SIZE",
+      "value": 16,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RESOURCE_CELL_WIDTH",
+      "value": 83,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RESOURCE_COUNT",
+      "value": 4,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RESOURCE_AMOUNT_OFFSET",
+      "value": 13,
+      "verification": "design-verified"
+    },
+    {
+      "name": "BUILD_BADGE_BOTTOM",
+      "value": 38,
+      "verification": "design-verified"
+    },
+    {
+      "name": "TEXT_SHADOW_OFFSET",
+      "value": 1.2,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CLIMB_DETAIL_GAP",
+      "value": 26,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COLOR_TEXT",
+      "value": 3874745855,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COLOR_ACCENT",
+      "value": 1743315199,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COLOR_WARNING",
+      "value": 4290273279,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COLOR_DIM",
+      "value": 2443882495,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COLOR_TRACK",
+      "value": 540820121,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COLOR_SHADOW",
+      "value": 204,
+      "verification": "design-verified"
+    }
+  ],
+  "telemetry": {
+    "speed": "Three-dimensional speed from original flight state times metersPerTile, displayed m/s.",
+    "altitude": "Flight Y times metersPerTile, explicitly ALT DATUM: elevation over flat logical map datum, not altitude above buildings.",
+    "verticalSpeed": "Flight vy times metersPerTile, signed m/s.",
+    "throttle": "Actual commanded collective fraction from Source; not battery charge.",
+    "attitude": "Compass from actual camera heading; artificial horizon is the world-up plane projected through the actual camera basis and vertical FOV, including camera tilt.",
+    "hull": "Live controlled Mindustry unit health/maxHealth.",
+    "core": "Live player.core health/maxHealth; missing core explicitly reported.",
+    "resources": "First four currently stocked native core item types, icons and real amounts; this is a compact summary, Build restores complete native inventory.",
+    "wave": "Actual native wave index and native countdown, when rules.waves is true.",
+    "environment": "Optional truthful Source.skyClock/skyPhase strings provided by environment adapter."
+  },
+  "nativeVisibility": {
+    "policy": "Compose original visibility suppliers for bulky panels only while Flight is active; retain parent act callbacks and restore full native interface during Build, 2D, dialogs, keyboard focus, suspension, death or menu.",
+    "targets": [
+      "waves/editor",
+      "fps/ping",
+      "minimap/position",
+      "hudfrag.coreItems",
+      "PlacementFragment ancestor of inputTable"
+    ],
+    "retained": [
+      "Core.scene",
+      "menuGroup",
+      "hudGroup",
+      "overlaymarker update callbacks",
+      "native pause and saving indicators",
+      "core-under-attack and guardian warnings",
+      "spawn warnings",
+      "toasts",
+      "chat",
+      "console",
+      "dialogs",
+      "logic HUD text"
+    ],
+    "lifecycle": "Track exact native element and original predicate identities; rediscover native builder root after rebuild; restore only predicates still owned by this component on close.",
+    "input": "Own HUD is Touchable.disabled and never consumes input. It does not mutate native build plans, selections, health, inventory or time."
+  },
+  "acceptance": [
+    "Flight hides only named bulky native panels; Build and 2D restore original visibility.",
+    "HUD and text add no clickable hit target.",
+    "Health/core/items match native state; no fake energy/battery.",
+    "Horizon handles camera tilt and 90-degree banks without NaN.",
+    "Menus, console, inventory/config UI remain reachable through Build or native menu paths.",
+    "close restores original predicates without overwriting later replacements."
+  ],
+  "limitations": [
+    "No battery simulation exists and none is implied.",
+    "Map datum altitude is not terrain-relative clearance.",
+    "Resource summary is limited; full native inventory remains in Build Mode.",
+    "Visual runtime acceptance is pending screenshot review."
+  ]
+}

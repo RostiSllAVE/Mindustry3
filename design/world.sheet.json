@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "descriptor": "fpv.world.World3DAdapter",
+  "verification": "design-verified",
+  "runtimeVerified": false,
+  "coordinates": "Canonical gameplay XYZ: X and Y are Mindustry horizontal coordinates divided by tilesize, Z is continuous altitude in tiles. Velocities are tiles/second. Renderer mapping is (X,Z,-Y); inverse is (renderX,-renderZ,renderY). Native yaw 0=east,90=north; positive pitch nose up, positive roll right wing down.",
+  "authority": "The original native world owns XY tiles, construction, economy, AI goals and native horizontal positions. TerrainElevation supplies physical height. UnitAltitudeSystem owns physical vertical dynamics for native units; controlled FPV FlightController supplies its real position, velocity and attitude. Unit3DState snapshots are immutable and allocated only when requested by physical consumers, not once per rendered unit/frame.",
+  "structures": "Structure existence comes from Tile.build, never Groups.build or active/enabled/efficiency flags. Surface and physical queries remain independent of fog visibility and rendering activity.",
+  "impulses": "World3DAdapter.addVelocity applies canonical horizontal delta-velocity through native Unit.impulse, compensating native mass and converting tiles/second to game units/tick. Horizontal magnitude is bounded to 200 tiles/second per impulse; Z delta is bounded to 30 and updates the authoritative altitude controller. Dead/removed units are ignored. Native player XY impulses enter FPV through the existing motion bridge exactly once.",
+  "queries": "Continuous segment tests traverse horizontal tile intervals and split natural surfaces along the same triangle diagonal as terrain rendering. Linear surface crossing determines first hit; raised tile side entry is detected too. Finite-radius queries use a conservative sampled footprint and swept vertical radius. XYZ distance and LOS are available now; ordinary adapted projectiles, lightning and lasers now use XYZ contacts; unsupported native weapon lifecycles retainXY.",
+  "projectiles": "Projectile3DState is a bounded canonical XYZ state/segment foundation for future weapon adapters. It is not automatically registered for existing native bullets and does not claim that native combat has migrated.",
+  "lifecycle": "No save or tile writes. Unit snapshots respect native death/removal, identity reuse, and current world. Terrain invalidation stays in the existing terrain module.",
+  "parameters": [],
+  "tests": "Pure coordinate/XYZ distance/projectile segment/height ray tests plus ground slope, body support, pause and native-state smoke checks.",
+  "testResults": "pending execution"
+}

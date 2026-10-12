@@ -1,0 +1,67 @@
+package fpv;
+
+import arc.Core;
+import arc.files.Fi;
+import arc.graphics.Gl;
+import arc.util.ScreenUtils;
+import arc.util.Time;
+import fpv.render.ProceduralUnitModelProfile;
+import mindustry.Vars;
+import mindustry.gen.*;
+import java.util.ArrayList;
+
+/** Reversible native ownership/camera/trigger boundary; neither model nor test replaces control logic. */
+final class GreenModelControlSmokeChecks {
+    static String run(FpvMod mod,mindustry.type.UnitType type){
+        if(!Boolean.getBoolean("fpv.smoke")||Vars.net.active())throw new IllegalStateException("Isolated SDL lab required");
+        var original=Vars.player.unit();var unit=type.create(original.team);unit.set(72*8,72*8);unit.rotation=90;unit.add();
+        int view=Core.settings.getInt("fpv-camera-view",0),angle=Core.settings.getInt("fpv-pov-angle",105);boolean build=mod.buildMode,suspended=mod.input.isSuspended();float delta=Time.delta;
+        var block=mod.input.block;int checks=0;
+        try{
+            mod.input.block=null;mod.setBuildMode(false);mod.input.setSuspended(false);Vars.player.unit(unit);Core.settings.put("fpv-pov-angle",90);Core.settings.put("fpv-camera-view",0);mod.resetPose();
+            var pose=mod.world3d.unitState(unit);var profile=ProceduralUnitModelProfile.forType(unit.type);
+            require(profile.cameraTopOffset(pose.halfHeight(),1,1,0,0)==0,"green unit old camera envelope unchanged");checks++;
+            double size=unit.hitSize/(double)Vars.tilesize,width=Math.max(unit.type.region.width,unit.type.region.height)*unit.type.region.scl()/Vars.tilesize;
+            double oldTop=Math.max(pose.halfHeight(),fpv.render.SpriteExtrusionRenderer.halfDepth(unit));
+            double oldEye=fpv.flight.GroundEyeHeight.desired(size,width,oldTop,0);
+            for(int i=0;i<200;i++)mod.updateCamera(1/60.0);
+            require(Math.abs(mod.camera.position.y-mod.flight.state().y-(unit instanceof Legsc?Math.max(.72,pose.halfHeight()*.35):oldEye))<.003,"production first-person eye is identical to pre-profile green unit");checks++;
+            mod.renderer3d.render(mod.camera);require(mod.renderer3d.firstPersonRig().stats().weapons()>0,"original native weapons in FPV");checks++;capture("green-"+type.name+"-controlled-first.png");
+            Time.delta=1;mod.updatePick();mod.input.applyFlightTrigger(true);int before=shots(unit);
+            for(int i=0;i<800;i++){for(var mount:unit.mounts)mount.weapon.update(unit,mount);Time.update();}
+            require(shots(unit)>before,"possessed green unit actually fires through native trigger/mounts");checks++;
+            for(var mount:unit.mounts)mount.recoil=1; // Capture the existing native recoil pose, including long-charge beams.
+            mod.renderer3d.render(mod.camera);capture("green-"+type.name+"-controlled-firing.png");mod.input.applyFlightTrigger(false);
+            for(int mode=1;mode<=2;mode++){
+                fpv.ui.CameraView.cycle();for(int i=0;i<200;i++)mod.updateCamera(1/60.0);mod.updatePick();mod.renderer3d.render(mod.camera);
+                require(fpv.ui.CameraView.selected()==mode&&mod.renderer3d.showControlledUnit()&&!mod.renderer3d.firstPersonActive(),"normal F7 world-model mode "+mode);checks++;
+                require(mod.renderer3d.firstPersonRig().stats().weapons()==0,"no duplicate viewmodel "+mode);checks++;
+                capture("green-"+type.name+"-controlled-"+(mode==1?"front":"rear")+".png");
+            }
+            require(mod.world3d.unitState(unit).equals(pose)&&unit.hitSize==unit.type.hitSize,"control rendering never changes physical XYZ/envelope");checks++;
+            if(unit instanceof Legsc){
+                var locomotion=fpv.units.ground.GroundUnitProfiles.profile(unit);double min=0,max=0;
+                for(int stance=0;stance<2;stance++){
+                    for(int tick=0;tick<250;tick++){mod.unitAltitudes.setGroundStanceControl(unit,true,stance==0?-1:1,.1);mod.unitAltitudes.update(.1);}
+                    var p=mod.unitAltitudes.unitState(unit);var physical=mod.unitAltitudes.groundFamily().pose(unit);
+                    double clearance=p.z()-p.halfHeight()-physical.supportHeight();if(stance==0)min=clearance;else max=clearance;
+                    require(Math.abs(clearance-(stance==0?locomotion.normalStance():locomotion.maximumClearance()))<.08,"Corvus unchanged Q/E endpoint "+stance);checks++;
+                    mod.resetPose();mod.updateCamera(1/60.0);mod.renderer3d.render(mod.camera);
+                    require(mod.renderer3d.groundFamily().visualLegCount(unit)==4,"four articulated feet at extension "+stance);checks++;
+                    for(int leg=0;leg<4;leg++){require(Double.isFinite(mod.renderer3d.groundFamily().footHeight(unit,leg)),"finite extended terrain foot");checks++;}
+                    capture("green-corvus-controlled-stance-"+stance+".png");
+                }
+                require(max>min+1,"manual height remains functional");checks++;
+                mod.unitAltitudes.setGroundStanceControl(unit,false,0,.1);
+            }
+            require(Gl.getError()==0,"controlled views GL0");checks++;
+            return "PASS: "+checks+" native green unit possession/first-person/front/rear/trigger checks; original weapon art, actual native firing, unchanged eye/physics, no viewmodel duplication, GL0";
+        }finally{
+            var bullets=new ArrayList<Bullet>();for(var bullet:Groups.bullet)if(bullet.owner==unit)bullets.add(bullet);for(var bullet:bullets){bullet.hit=true;bullet.remove();}
+            Time.delta=delta;Vars.player.unit(original);unit.remove();Core.settings.put("fpv-camera-view",view);Core.settings.put("fpv-pov-angle",angle);mod.input.block=block;mod.input.setSuspended(suspended);mod.resetPose();mod.setBuildMode(build);
+        }
+    }
+    private static int shots(Unit unit){int count=0;for(var mount:unit.mounts)count+=mount.totalShots;return count;}
+    private static void capture(String name){ScreenUtils.saveScreenshot(new Fi(System.getProperty("fpv.smoke.output")).child(name));}
+    private static void require(boolean value,String label){if(!value)throw new IllegalStateException("green unit control: "+label);}
+}

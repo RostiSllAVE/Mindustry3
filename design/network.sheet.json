@@ -1,0 +1,107 @@
+{
+  "schemaVersion": 1,
+  "descriptor": "fpv.net.FpvNetwork",
+  "verification": "user-approved",
+  "runtimeVerified": false,
+  "policy": {
+    "compatibility": "Supported Mindustry 160.5 and 160.7 servers and clients require matching protocol and exact mod JAR SHA-256 to activate network FPV. Use the same game revision on the host and every client; the native handshake only compares build 160. Official server and desktop runtimes are tested together for each supported revision. Native mod name/version matching is enabled independently. A missing, incompatible or timed-out handshake disables client FPV and rejects the unsupported server session.",
+    "authority": "Clients submit bounded control axes, mode, local view heading, weapon aim and a creator-flight request bit. They never submit coordinates, velocity, damage, hit targets, wall health or flight tuning. Server-owned FlightSettings determines performance for each authenticated native owner. The server integrates flight, native movement, ramming, projectile hits and projection HP. Mode3 and nonflying possession use capability-based GroundedPilot/native movePref, held Q/E stance and physical support; fixed ControlBlock proxies cannot translate. A creator request requires the host-only permission (OFF by default), valid ownership and a mobile ground unit. Creator bodies and permission replicate on a server-only channel; release/revocation enters authoritative landing. Native health/death/build/ammo remain authoritative. Inactive controls cannot move or shoot.",
+    "nativeSnapshot": "A pinned ClientSnapshotCallPacket wrapper preserves native build-plan and input validation but rejects flight-unit positional claims. Server flight units have lastUpdated=0 so native remote interpolation cannot overwrite original VelComp movement. UnitMotionBridge queues and reconciles one original XY integration; controller and possession remain native. Release restores interpolation through snapInterpolation.",
+    "coordinates": "Wire unit states use canonical X/Y horizontal, Z vertical in tiles. Controlled FlightController pose uses existing render X,Y-up,Z=-nativeY axes and normalized quaternion. Server metadata hull bounds are transmitted and override atlas-derived client collision bounds in network sessions. Clients interpolate display pose by a bounded 100ms delay with no extrapolation; exact received samples also reconcile native SyncLocal owner coordinates for builder interaction.",
+    "time": "Build Mode never pauses or slows a shared world. Server simulation time alone integrates physics. Client input silence causes stable hold after INPUT_TIMEOUT_SECONDS, never a repeated unbounded throttle command. Input sequence and world epoch reject stale/replayed controls. Client sequence remains monotonic across native world reloads within one connection; only a fresh connection or offline transition resets it. The server ceiling uses max(MAX_HEIGHT, actual terrain maximum + START_HEIGHT), matching offline flight.",
+    "transport": "Use native binary custom packet handlers on the game thread; no registration-order-dependent custom packet IDs. Fixed bounded binary records reject NaN, infinities, invalid axes/counts, trailing bytes and unsupported message kinds. Large server snapshots use bounded reliable chunks and atomic complete replacement. Gameplay state channels are server-to-client only. Short combat and explosion visuals are sampled at 20Hz, independently of 5Hz persistent state channels; unit poses use 10Hz snapshots. Logical server snapshots are capped at16MiB while client hello/input payloads are capped independently at256bytes; gzip wall snapshots are also bounded by map tile count.",
+    "headless": "Separate CPU-only runtime constructs terrain, unit altitude, shared physical world, separation, combat and network sessions. No cursor, JNA, UI, shader, mesh or desktop initialization is required. Native content remains source of truth and client renderers consume synchronized poses/visuals.",
+    "verification": "Pure protocol/sequence/chunk tests precede actual dedicated local server plus two isolated clients. Native fixtures must demonstrate shared XYZ, server-only damage/ram/projection health, rejection of forged positional/HP claims, handshake mismatch rejection, reconnect/world reset and ordinary native unit movement. Never label multiplayer verified from in-process codec tests.",
+    "contacts": "The authoritative frame prepares every pilot before integration. During each pilot sweep, other controlled bodies use immutable start-of-frame snapshots. One shared unordered-pair ledger permits one momentum exchange per frame and one damage event per native crash cooldown. The second solver still clamps contact. Offline CrashSystem policy remains unchanged.",
+    "nativeBoost": "Native canBoost mobile nonflying noninternal types use independent authenticated boost intent, the existing per-instance physical pilot, native speed/boost multiplier and unit.canShoot. Ground/boost/landing flags share the creator-flight channel in separately bounded registries; Creator permission remains OFF by default and cannot grant ordinary boost eligibility. ClientSnapshot boosting flags are overridden from server mode authority to prevent stale native snapshots from restarting completed landings. Airborne boost bodies and post-boost upper support have independent guarded save chunks; load resumes physical descent. AI boosted handoff transfers XYZ and momentum into existing altitude control without changing its controller."
+  },
+  "parameters": [
+    {
+      "name": "PROTOCOL_VERSION",
+      "value": 3,
+      "verification": "design-verified"
+    },
+    {
+      "name": "INPUT_HZ",
+      "value": 30,
+      "verification": "design-verified"
+    },
+    {
+      "name": "SNAPSHOT_HZ",
+      "value": 10,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CHANNEL_HZ",
+      "value": 5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HANDSHAKE_TIMEOUT_SECONDS",
+      "value": 10,
+      "verification": "design-verified"
+    },
+    {
+      "name": "INPUT_TIMEOUT_SECONDS",
+      "value": 0.5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CHUNK_BYTES",
+      "value": 12000,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_MESSAGE_BYTES",
+      "value": 16777216,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_UNIT_STATES",
+      "value": 16384,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_VISUAL_STATES",
+      "value": 2048,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_CHANNELS",
+      "value": 16,
+      "verification": "design-verified"
+    },
+    {
+      "name": "INPUT_RATE_LIMIT",
+      "value": 120,
+      "verification": "design-verified"
+    },
+    {
+      "name": "VISUAL_HZ",
+      "value": 20,
+      "verification": "design-verified"
+    },
+    {
+      "name": "INTERPOLATION_DELAY_SECONDS",
+      "value": 0.1,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_CLIENT_MESSAGE_BYTES",
+      "value": 256,
+      "verification": "design-verified"
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "protocol",
+      "criterion": "Malformed/bounded controls, stale sequence, epoch mismatch, chunk limits and atomic replacement tests pass.",
+      "runtimeVerified": false
+    },
+    {
+      "id": "localNetwork",
+      "criterion": "A real dedicated server and two real client processes agree on server-controlled flight and damage; mismatched and forged client input are rejected.",
+      "runtimeVerified": false
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "schemaVersion": 1,
+  "component": "native-sprite-alpha-extrusion",
+  "descriptor": "fpv.generated.ExtrusionConfig",
+  "verification": "design-verified",
+  "runtimeVerified": false,
+  "generation": "Generate numeric public static final double constants from parameters. Owned sources are SpriteExtrusionGeometry, SpriteExtrusionRenderer and pure SpriteExtrusionGeometryTest.",
+  "parameters": [
+    {
+      "name": "MAX_GRID_SIDE",
+      "value": 64,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_GRID_SIDE",
+      "value": 8,
+      "verification": "design-verified"
+    },
+    {
+      "name": "ALPHA_THRESHOLD",
+      "value": 32,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_CELL_COVERAGE",
+      "value": 0.2,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_SOURCE_PIXELS",
+      "value": 1048576,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_VERTICES",
+      "value": 65520,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_CACHE_ENTRIES",
+      "value": 96,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_CACHE_BYTES",
+      "value": 25165824,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_BUILDS_PER_FRAME",
+      "value": 1,
+      "verification": "design-verified"
+    },
+    {
+      "name": "DEPTH_FRACTION",
+      "value": 0.12,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_DEPTH_TILES",
+      "value": 0.1,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_DEPTH_TILES",
+      "value": 1.5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_SHADE",
+      "value": 0.55,
+      "verification": "design-verified"
+    },
+    {
+      "name": "LIGHT_X",
+      "value": 0.35,
+      "verification": "design-verified"
+    },
+    {
+      "name": "LIGHT_Y",
+      "value": 0.8,
+      "verification": "design-verified"
+    },
+    {
+      "name": "LIGHT_Z",
+      "value": -0.4,
+      "verification": "design-verified"
+    }
+  ],
+  "geometry": {
+    "algorithm": "Alpha grid up to64cells along longest dimension, aspect preserved. Cell occupancy uses coverage of source alpha>=threshold. Greedy nonoverlapping rectangles cover occupied top/bottom cells; exposed cell edges alone get vertical sides, including inner holes. Side UV samples come from an opaque source pixel near the occupied cell center.",
+    "coordinates": "Normalized local x,z footprint[-0.5,0.5], y[-0.5,0.5]; nose is -Z. Native sprite width/depth is region.width/height*region.scl()/Vars.tilesize. Extrusion depth is clamped minimum native side times DEPTH_FRACTION.",
+    "uv": "Top/bottom retain original region UV and shader alpha cutoff; side faces use opaque representative pixels. Atlas UVs inset half texel. No asset copying or atlas modification.",
+    "limits": "Pure generator halves resolution down to configured minimum if face count exceeds vertex cap; fails visibly to native renderer if it still cannot fit. Coverage approximation can simplify holes/features below a grid cell.",
+    "attitude": "yaw is original Mindustry degrees0east/+90north, pitchpositiveclimb, rollpositivebankright; extrusion center passed from native unit altitude bridge."
+  },
+  "runtime": {
+    "ownership": "Read only Core.atlas.getPixmap(AtlasRegion), never dispose or mutate host Pixmap/Texture. Unsupported rotated/flipped/missing/oversized regions returnfalse for existing renderer fallback.",
+    "cache": "Bounded identity LRU by native body region, with UV/dimension/texture validation; positive and negative entries share count cap. Byte budget includes both GPU VBO and Arc CPU vertex backing estimate. At mostone new build eachframe; fallback handles deferredtypes. Own temporary alpha copy exists only during missbuild and is not distributed.",
+    "renderState": "Optional begin()/end() batches save and restore program, texture0 binding/activeunit, depthtest/writes, blend/cull. Standalone render wraps itself. Mesh/shader cleanup on failures, eviction and dispose; no VBO per ordinaryframe.",
+    "team": "On the body-local top cap only, preserve native UnitType.drawCell for non-Crawlc units with drawCell=true. Sample the original cellRegion from the same atlas texture, centered using native physical body/cell dimensions (region dimensions times scl), and alpha-blend its RGB multiplied by the native UnitType.cellColor(unit), including health-dependent color. The body alpha discard runs first, so cell art cannot fill silhouette holes. Missing, flipped, rotated or different-texture required cell art returnsfalse to the original caller fallback rather than silently losing team identity. No second texture unit or generated team art is used.",
+    "simulation": "No modification of unit state, collision, health, AI, selection, height or world."
+  },
+  "acceptance": [
+    "Opaque rectangle becomes one top and one bottom rectangle, side edgesonly.",
+    "Ring silhouette preserves hole and interior side faces.",
+    "Disconnected regions remain disconnected; transparent silhouette emits no geometry.",
+    "Top/bottom UVs cover actual normalized footprint; normals/winding are outward.",
+    "Alpha threshold/coverage and reducedresolution/vertex limits behave deterministically.",
+    "Yaw/pitch/roll transform axes agree with altitude adapter; test basis withoutArc/GL.",
+    "Cache bytes/count bounded, native assets never disposed, deferred builds usefallback.",
+    "Native cell overlay remains centered at its own physical dimensions, appears only on body-local top, follows cellColor(unit), and never fills transparent body holes."
+  ],
+  "limitations": [
+    "Grid approximates the outline at bounded resolution; not a handcrafted unit model.",
+    "Main unit body and its native top cell overlay only; animated legs, weapons and crawler segment cells are not reconstructed by this module.",
+    "Unsupported atlas regions retain the previous renderer rather than malformed extrusion."
+  ]
+}

@@ -1,0 +1,44 @@
+# Task 4 — True XYZ power network connections (0.17.0)
+
+This is a topology extension of the existing layered adapters. It does not replace Mindustry's energy solver or modify combat, movement, structural support, item/liquid transport, geometry or block statistics.
+
+## Previous limitation and integration
+
+`LayerVerticalTransfers` rejected every ground power endpoint and required aligned XY/limited floor gaps. `LayerBuildingAdapter` rebuilt graphs exclusively from upper buildings, while native `PowerGraph.reflow/remove` use packed XY identities that cannot distinguish floors. Mouse linking explicitly refused Z0/upper power pairs and manual same-floor upper node links.
+
+`LayerPowerNetwork` traverses native ground electrical connections plus the existing upper adjacency and explicit layer-ID edges using building identity. Only ground branches connected to upper networks are taken over. Native `PowerGraph` still calculates generation, consumption, distribution, batteries and fuel-dependent supply. Old ground graph updaters are removed before a hybrid graph is updated; a newly attached ground branch defers its first hybrid update because the native updater already ran in that simulation tick. Detaching a branch reinstates normal native graph updaters. Topology rebuilds happen on changes; unchanged networks reuse graphs and cached endpoint indexes.
+
+`LayerBuildingAdapter` retains layer-local native instances and adds canonical ground endpoints, XYZ range checks, combined native/custom node-count limits and explicit reasons. Horizontal distance retains vanilla target-footprint tolerance; the Z separation between construction anchors is converted from gameplay tiles into native pixel units before applying `laserRange`. Neither same XY nor the former connector floor-gap allowance bypasses node range. Only the native insulated-wall rule is checked; ordinary opaque structures do not acquire new power line-of-sight restrictions.
+
+`MouseConnection` uses the existing shared 3D hits and LINK/UNLINK authority. Preview, selection, validation and the visible depth-tested beam share actual endpoints. Existing Z0-only configuration still uses vanilla RPCs. The native node-family link is undirected and costs no special riser materials. Existing non-node aligned upper risers retain their shaft, floor-gap and material rules. BeamNode directional links retain their native same-floor behavior; an ordinary Power Node can connect their electrical network across floors.
+
+## Persistence and multiplayer
+
+The layered save envelope is version 5, with the complete existing graph-edge list appended after the existing rebuild queue. Versions 1–4 remain readable. New version-5 saves require 0.17.0; reverting to 0.16.0 requires an older save, which this task leaves untouched. This preserves explicit disconnections instead of regenerating every default auto-link during reload. Native building modules retain battery charge, fuel and other electrical state. Destruction is pruned before saving, including a save made immediately after removal. Old version-4 risers that violate the newly required node XYZ range/limits are dropped with a log message while their buildings and other valid links remain.
+
+The existing authenticated construction packets, action filters, team/build range checks and state snapshots remain authoritative. Clients restore electrical state and connections but do not tick the hybrid energy solver. Different mod JARs remain incompatible by design.
+
+## Reproducible scene
+
+Use an isolated test map, permit upper Free construction for fixture setup only, then disable infinite resources before electrical checks. Place an RTG on Z0 and give it real thorium. Connect it to a ground node, connect that node to an upper node, and use a Lancer/battery on Z2 or an illuminator on Z5. Use Power Node Large when the Z5 XYZ distance exceeds the ordinary node's six-tile range. Breaking the only wire stops production-backed supply; stored battery energy may legitimately continue supplying the isolated branch until exhausted.
+
+`tools/launch-layer-smoke.ps1 -Run <unique-name> -XyzPower -ElevatedTurrets -AutomaticConstruction -MouseInteraction` runs scripted production methods inside the installed SDL 160.7 game, with a separate D: profile. `tools/launch-network-smoke.ps1 -RunId <unique-name> -XyzPower` runs the official dedicated 160.7 server and two actual clients. These are automated integration tests, not physical mouse/controller gameplay sessions.
+
+## Verification
+
+Final tested package: `dist/mindustry-fpv-0.17.0.jar`, 3,744,543 bytes, SHA-256 `32133b3fc294a0929754d49d7d3785b02d36e49fe2a96604c63dffc50c54da74`. All final launches used this exact package and isolated D: profiles.
+
+- All 76 Java suites passed, including 31 new native-graph assertions: real ground solar production charges upper batteries, first attachment cannot charge production twice, disconnect/reconnect/destroy partition actual graphs, no idle topology rebuild, reversed requests deduplicate, finite vertical/horizontal range and native link-count/team/category rules.
+- Actual installed SDL 160.7 passed 59 power checks: fueled RTG Z0 -> node Z0 -> node Z2 -> Lancer Z2 actually fires/damages; valid diagonal node Z0 -> Z5 -> illuminator; multiple real generators and consumers; a sole upper RTG charges a lower battery; real previously generated battery energy discharges after isolation; native Z0-only circuits; old upper risers; red XYZ preview and green direct connect/disconnect/reconnect; immediate save after destruction; complete native `.msav` reload with real fuel/charge/operation; version-4 migration retains structures while dropping invalid old wires. `xyz-power-network.png` was inspected; the actual 3D connection renderer completed with GL0.
+- Previous integration coverage also passed on the final package: 293 elevated-turret checks, 16 turret GPU pixel checks, 38 schematic, 48 placement lifecycle, 37 automatic construction, 26 mouse and 209 layered checks, plus existing first-person, construction, wall, display and interaction GPU checks. Full three-map/copied-user-save/campaign/native-build/FPV/combat/save regression passed with GL0.
+- The official dedicated 160.7 server and two actual clients passed the Task4 electrical scenario (`-XyzPower`): native ground RTG powers a real upper consumer; authenticated wire creation/replay/foreign denial; unchanged wire costs; reverse unlink; reconnect; transmitter destruction; synchronized client power/status and no client hybrid-generation tick. The server passed 154 general network checks and 159 construction/electrical checks. The task-specific mode keeps existing construction/copy/creator-flight tests but omits the unrelated upper-turret possession stress phases.
+- An important remaining failure was investigated separately: the general network stress run can reset an acknowledged upper-turret possession to the old Alpha and time out. This also reproduced on the untouched 0.16.0 backup at re-possession phase16 (`local/net-lab/xyz-power-baseline016-1607`). Task4 does not claim that this full possession stress run passes, and does not change production combat/control code. Temporary diagnostic changes were removed. This needs a separate control-synchronization correction.
+- Power topology remained cached through unchanged ticks. The existing 1000-platform/120-frame construction benchmark completed; it measures the construction pass, not whole-game FPS or large-network power rebuilding.
+
+Evidence: `local/build-xyz-power-final4.log`, `local/layer-smoke/xyz-power-final4-1607/layers-result.json`, `local/compat-smoke/xyz-power-final4-1607/results.json`, `local/net-lab/xyz-power-final4-1607/{server,client-a,client-b}-results.json`, and `local/xyz-power-verification.json`. These are scripted automated integration tests. No physical mouse/controller gameplay session, fresh 160.5 run or full-game FPS claim is made.
+
+## Limits and performance scope
+
+This targets supported native PowerNode families and the existing audited upper-building adapters. It does not introduce free-form directional BeamNode aiming or new third-party power-block adapters. Native ground bars/configuration continue to use their native packed-XY link list; combined limits and cross-floor linking are handled by the shared 3D interaction. Insulation is evaluated on the sampled native floor path, not arbitrary custom insulating meshes. A graph transition can defer hybrid distribution by one simulation tick to avoid double-charging batteries.
+
+Steady-state checks reuse the graph and endpoint index; topology changes traverse the attached ground branches and upper graph, so rebuilding very large connected networks is more expensive than an idle frame. The test does not establish a whole-game FPS guarantee or a hardware multiplayer latency benchmark. Mindustry 160.7 is the tested runtime; this pass does not claim a fresh 160.5 run.

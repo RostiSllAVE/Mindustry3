@@ -1,0 +1,402 @@
+{
+  "schemaVersion": 1,
+  "descriptor": "fpv.flight.FlightProfile / FlightSettings",
+  "verification": "design-verified",
+  "runtimeVerified": false,
+  "generation": "Generate PerformanceConfig numeric constants from parameters. Existing FlightProfiles 19-field generation remains unchanged.",
+  "policy": {
+    "units": "Original UnitType.speed converted to tiles/second by caller; hitSize to tiles; maxHealth is a dimensionless gameplay input, never asserted to be kilograms. Physics uses the existing metersPerTile conversion.",
+    "mass": "Unit mass scale = clamped(size/reference)^2 * (finite health/reference)^healthExponent, bounded by MIN/MAX_MASS_SCALE. Physical gameplay mass = original base mass * unit mass scale * user mass modifier; size bounded separately. Independent unit base-mass lookup is available for ram targets.",
+    "agility": "Finite nonnegative native speed enters a fractional power, then the derived agility and practical speed scales are bounded. Agility decreases with mass and rises with native speed; affects turn rates, response, thrust reserve and reference acceleration cap. Principal inertia scales with mass and size squared. Original unit AI/type stats are never modified.",
+    "heavyMobility": "From 0.5, burden=min(HEAVY_MAX_BURDEN,max(1,massProxy/HEAVY_MASS_THRESHOLD)^HEAVY_MASS_EXPONENT * max(1,sizeScale/HEAVY_SIZE_THRESHOLD)^HEAVY_SIZE_EXPONENT). Divide the former practical-speed scale by burden and the pre-clamped agility by burden^HEAVY_AGILITY_EXPONENT. This continuously reduces large-unit speed, acceleration reserve and torque/rates while retaining mass, principal inertia and the hover reserve. Units below both thresholds retain their previous behavior.",
+    "nativeIdentity": "UnitMetadata includes the exact native UnitType.name; its legacy four-argument constructor means unknown identity. Only the exact base-game name flare receives FLARE_SPEED_MULTIPLIER on the aerodynamic reference, after generic unit scaling and before the 400m/s cap. Its real speed/size/health, mass, inertia, thrust and rates remain unchanged. This is the user's explicit unit-specific tuning; other units/mod-prefixed names do not inherit it. The multiplier applies to every preset/custom profile, but Insane may reach the existing cap before a full 1.5x gain.",
+    "thrust": "Unit motor force derives from native size/mass/agility then power modifier. User mass reduces acceleration without automatically granting more motor force. Reference acceleration cap scales by unit agility with a minimum hover reserve; cannot create more force than available motors.",
+    "drag": "Practical speed is an aerodynamic reference, not instantaneous velocity clipping. Unit speed scale and drag modifier derive a bounded target <=400m/s. Linear and quadratic drag coefficients are calibrated to that target at full sustained level-flight thrust. Gravity/impulses/dives can overshoot. Unpowered/underpowered profiles have no sustainable level-flight speed.",
+    "response": "Motor and angular-rate response time constants are bounded and preserve fixed250Hz integration. Rigid-body state and motor spool are preserved on profile changes; same scale/timestep required.",
+    "settings": "Preset index0 Cinematic,1 Freestyle(default),2 Race,3 Insane,4 Custom. Custom values are explicit bounded sliders and retain existing saved pitch/roll/yaw/expo. Presets also respect user base rates, multiplying by preset and native-unit agility. Rebuild only on metadata/settings change.",
+    "limits": "Original aggregate force/torque model remains; no claim of four-rotor simulation or Liftoff physics. No hard scalar speed assignment. High-speed collision remains caller responsibility and requires real integrated sweep testing.",
+    "flightSpeed": "Flight speed25..300% applies to all presets after unit scaling, before400m/s bound. Recalibrate drag continuously; do not reset pose/inertia or change native UnitType. Build precision speed is separate."
+  },
+  "parameters": [
+    {
+      "name": "REFERENCE_SPEED_TILES_PER_SECOND",
+      "value": 22.5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "REFERENCE_HIT_SIZE_TILES",
+      "value": 1.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "REFERENCE_HEALTH",
+      "value": 150.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEALTH_MASS_EXPONENT",
+      "value": 0.35,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_MASS_SCALE",
+      "value": 0.2,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_MASS_SCALE",
+      "value": 4096.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_SIZE_SCALE",
+      "value": 0.25,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_SIZE_SCALE",
+      "value": 32.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "AGILITY_MASS_EXPONENT",
+      "value": 0.16,
+      "verification": "design-verified"
+    },
+    {
+      "name": "NATIVE_SPEED_EXPONENT",
+      "value": 0.25,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_AGILITY",
+      "value": 0.16,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_AGILITY",
+      "value": 1.7,
+      "verification": "design-verified"
+    },
+    {
+      "name": "SPEED_MASS_EXPONENT",
+      "value": 0.1,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_SPEED_SCALE",
+      "value": 0.22,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_SPEED_SCALE",
+      "value": 1.65,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_THRUST_WEIGHT",
+      "value": 1.15,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_RESPONSE_SECONDS",
+      "value": 0.006,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_RESPONSE_SECONDS",
+      "value": 2.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_PRACTICAL_SPEED_MPS",
+      "value": 400.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_ACCELERATION_MPS2",
+      "value": 1200.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_RATE_DEGREES_PER_SECOND",
+      "value": 1800.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "DRAG_MASS_EXPONENT",
+      "value": 0.1,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEAVY_MASS_THRESHOLD",
+      "value": 12.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEAVY_SIZE_THRESHOLD",
+      "value": 2.5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEAVY_MASS_EXPONENT",
+      "value": 0.22,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEAVY_SIZE_EXPONENT",
+      "value": 0.3,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEAVY_AGILITY_EXPONENT",
+      "value": 0.5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "HEAVY_MAX_BURDEN",
+      "value": 4.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FLARE_SPEED_MULTIPLIER",
+      "value": 1.5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CINEMATIC_THRUST",
+      "value": 1.2,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CINEMATIC_SPEED",
+      "value": 28.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CINEMATIC_MASS",
+      "value": 1.2,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CINEMATIC_DRAG",
+      "value": 1.2,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CINEMATIC_RESPONSE",
+      "value": 1.7,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CINEMATIC_ACCELERATION",
+      "value": 35.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CINEMATIC_RATES",
+      "value": 0.6,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FREESTYLE_THRUST",
+      "value": 2.4,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FREESTYLE_SPEED",
+      "value": 75.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FREESTYLE_MASS",
+      "value": 1.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FREESTYLE_DRAG",
+      "value": 1.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FREESTYLE_RESPONSE",
+      "value": 1.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FREESTYLE_ACCELERATION",
+      "value": 95.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FREESTYLE_RATES",
+      "value": 1.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RACE_THRUST",
+      "value": 6.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RACE_SPEED",
+      "value": 180.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RACE_MASS",
+      "value": 0.95,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RACE_DRAG",
+      "value": 0.85,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RACE_RESPONSE",
+      "value": 0.65,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RACE_ACCELERATION",
+      "value": 240.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "RACE_RATES",
+      "value": 1.3,
+      "verification": "design-verified"
+    },
+    {
+      "name": "INSANE_THRUST",
+      "value": 18.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "INSANE_SPEED",
+      "value": 400.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "INSANE_MASS",
+      "value": 0.8,
+      "verification": "design-verified"
+    },
+    {
+      "name": "INSANE_DRAG",
+      "value": 1.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "INSANE_RESPONSE",
+      "value": 0.38,
+      "verification": "design-verified"
+    },
+    {
+      "name": "INSANE_ACCELERATION",
+      "value": 900.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "INSANE_RATES",
+      "value": 1.8,
+      "verification": "design-verified"
+    },
+    {
+      "name": "DEFAULT_PRESET",
+      "value": 1.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CUSTOM_PRESET",
+      "value": 4.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_POWER_PERCENT",
+      "value": 25.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_POWER_PERCENT",
+      "value": 2000.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_SPEED_REFERENCE",
+      "value": 10.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_MASS_PERCENT",
+      "value": 25.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_MASS_PERCENT",
+      "value": 1000.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_DRAG_PERCENT",
+      "value": 10.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_DRAG_PERCENT",
+      "value": 400.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_RESPONSE_PERCENT",
+      "value": 25.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_RESPONSE_PERCENT",
+      "value": 300.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_ACCELERATION_REFERENCE",
+      "value": 10.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_RATE_PERCENT",
+      "value": 25.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_RATE_PERCENT",
+      "value": 250.0,
+      "verification": "design-verified"
+    }
+  ],
+  "settings": [
+    "fpv-performance-preset",
+    "fpv-power",
+    "fpv-speed-reference",
+    "fpv-mass",
+    "fpv-drag",
+    "fpv-response",
+    "fpv-acceleration",
+    "fpv-rate-scale",
+    "fpv-pitch-rate",
+    "fpv-roll-rate",
+    "fpv-yaw-rate",
+    "fpv-expo"
+  ],
+  "acceptance": [
+    "Legacy controller tests unchanged; physical profile swap preserves pose, velocities, motor response and fractional step",
+    "Freestyle materially faster than legacy; Race and Insane faster again with reference target <=400m/s",
+    "Same preset makes small/fast unit lighter, quicker and more agile than huge/slow unit",
+    "Named Flare measures about 1.5x its identical unnamed 0.4 reference in Cinematic/Freestyle/Race, retains physical metadata/force/inertia, and respects the Insane cap",
+    "Antumbra/Eclipse generic mobility falls progressively below 0.4, with measured sustained speeds matching new references; medium units stay unchanged",
+    "Mass/power/drag/response/acceleration/rates custom settings independently affect resolved behavior",
+    "No instant velocity clamp when changing settings; finite extreme metadata and bounded custom settings",
+    "Pure simulated sustained speed and timestep consistency, plus separate native high-speed collision smoke required"
+  ],
+  "testResults": "pending root preflight/build"
+}

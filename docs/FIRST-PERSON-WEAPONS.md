@@ -1,0 +1,33 @@
+# First-person weapon thickness and private depth — 0.18.3
+
+Continued clean `feature/ui-polish` at `8ce1021`. The exact working0.18.2 is retained at `local/backups/before-viewmodel-0.18.2/mindustry-fpv-0.18.2.jar`, SHA256 `cdc3d80eada944cb18c3e85e4bf52e1130a132f9ba78eb779f5454f88bafb428`.
+
+## Rendering changes
+
+The previous first-person rig submitted textured perspective quads to the world depth buffer. They had no physical sides and were hidden when a nearby wall/platform was closer than the quad. Ordinary third-person weapons already use their separate world renderer; this pass does not change that renderer or Dagger's layered hull.
+
+`FirstPersonWeaponMeshes` invokes the existing unmodified alpha-extrusion generator for original native weapon atlas regions and the existing native nose/mount crop for integrated weapons. It generates top, bottom and silhouette side faces; transparent gaps stay empty. Top-surface placement exactly retains the old perspective plane. The bottom extends downward by `clamp(width*.32, .11, .23)` camera-space units. Mirroring, native traversal, camera basis, recoil and sway use the original rig calculations. Side shading samples existing opaque interior pixels from the same weapon art. The native team-cell overlay remains on the upper cap. No new textures or game assets are shipped.
+
+Static VBOs use a32-pixel maximum silhouette grid,8-pixel minimum on budget reduction,16,380 vertices per region,64 entries and8MiB CPU+GPU vertex storage. At most8 cache misses build in one frame; any deferred or unreadable region uses the existing planar fallback inside the same private-depth pass. Cache entries validate texture/UV/dimensions; identical integrated-gun crops reuse the VBO on repossession. Atlas changes invalidate entries and disposal releases only owned buffers/shaders. No geometry is regenerated during normal movement/fire.
+
+`FirstPersonViewmodelPass` draws into a reusable full-viewport RGBA color target with its **own depth attachment**, allowing correct weapon self-occlusion independently of environmental depth. It composites color after the world and world-space overlays, with depth testing/writing disabled for composition. The original scene depth is never copied, cleared or written by this pass. Nested framebuffer binding, viewport, clear color, program, two texture units, renderbuffer, depth function/write/test, cull/blend/scissor/stencil and blend functions/equations are restored. The private target resizes only when viewport dimensions change; estimated storage at1280×800 is6,144,000 bytes.
+
+The rig stops submitting for third-person/Build view, missing, dead or removed owners. Existing camera height, poses, controllers, native mount/shot data, projectile origin, LOS, damage, collision, hitboxes, construction, save and network code are unchanged. Seeing the cosmetic weapon through a nearby wall grants no firing privilege.
+
+## Verification
+
+Development actualSDL160.7 run `viewmodel-dev3-1607` passed78 GPU checks across Flare, Dagger, Fortress, Reign and Toxopid. It covered true silhouette sides, original art/integrated nose, native recoil pixel changes, wall/enclosed-depth blockers, unchanged destination world depth and GL state, inactive/dead/removed owners, cache/target reuse and first-person feet. Actual production-camera captures included open terrain and Reign underneath a constructed Z1 platform. Screenshots were visually inspected before final packaging. The development compile initially caught an unavailable Shader accessor in the new fixture; replaced it with the actual GL program query without changing the production fix.
+
+Final package: `dist/mindustry-fpv-0.18.3.jar`, **3,783,881 bytes**, SHA256 `c8651b19001becfc3bc6d913d324ab5283638bb91ceb36f79a0fdbe60a76ee9f`. Both actualSDL receipts and the installed `play/saves/mods/mindustry-fpv.jar` match this exact package. All **618 original non-mod profile files** remained byte-identical.
+
+- `local/build-viewmodel-final.log`: **79 Java suites passed**, including **520** first-person presentation checks for recoil/inertia, mount order, bounded positive thickness, enemy muzzle exclusion and unchanged distant trajectory. Existing silhouette, layered hull, camera and native combat suites passed.
+- `local/layer-smoke/viewmodel-final-1607/layers-result.json`: **83 GPU checks** across five controllable types, real cached side geometry, native texture/cell/nose art, recoil pixel movement, nearest-wall and enclosed-room depth blockers while turning/firing, exact unchanged world-depth pixel rejection, restored GL/framebuffer state, cold/warm cache, target reuse and repossession reuse, inactive/dead/removed owner hiding, first-person feet and no native HP/cargo/XY mutations. **39 production-camera checks**,209 construction checks,9 construction-preview GPU and7 display GPU checks also passed.
+- `local/compat-smoke/viewmodel-final-1607/results.json`: **three maps**, disposable user-save copies and save roundtrip, FPV/Build transitions, native and XYZ combat/obstacle interception, terrain,20 ground models and the32-check layered Dagger fixture passed; **GL0**. Existing shot origin/collision/damage behavior remains intact.
+
+Production camera heights remain DaggerZ **1.650**, Fortress **1.533**, Reign **2.945**, with the actual Z1 roof clamping Reign to **1.145** as before. Visually inspected these final captures:
+
+- [Dagger original artwork with sides](../local/layer-smoke/viewmodel-final-1607/firstperson-dagger-weapons.png), [recoil](../local/layer-smoke/viewmodel-final-1607/firstperson-dagger-recoil.png).
+- [Flare integrated gun](../local/layer-smoke/viewmodel-final-1607/firstperson-flare-enclosed.png), [Fortress](../local/layer-smoke/viewmodel-final-1607/firstperson-fortress-weapons.png), [Reign against nearest wall depth](../local/layer-smoke/viewmodel-final-1607/firstperson-reign-wall.png), [Toxopid](../local/layer-smoke/viewmodel-final-1607/firstperson-toxopid-wall.png).
+- [Production open-terrain Dagger](../local/layer-smoke/viewmodel-final-1607/ground-eye-dagger-fpv.png), [Reign underneath a real layered platform](../local/layer-smoke/viewmodel-final-1607/ground-eye-reign-roof.png).
+
+Wall/enclosed-room pixel tests use deterministic opaque fixture geometry at a depth nearer than every weapon vertex. The constructed Z1-platform capture uses the real production world renderer. These are scripted native SDL/GPU tests, not a manual mouse/controller gameplay session or a complete multistory-base playthrough. No fresh multiplayer/160.5 stress test, resize-specific GPU fixture or full-scene FPS benchmark was performed. Unsupported CPU-unreadable custom atlas regions retain the safe planar fallback described above. No push or merge.

@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "descriptor": "fpv.combat.Combat3DSystem / CombatGeometry / ProjectileDynamics / CombatPayloads / CombatVisual",
+  "verification": "design-verified",
+  "runtimeVerified": false,
+  "policy": {
+    "phase07": "All vanilla unit weapon and turret slots use XYZ proxies, including specialized lifecycle and mover patterns through explicit safe spatial replacements. Spawned missile units become physical projectiles derived from missile movement and death payload metadata. Unknown custom lifecycle damage callbacks are suppressed rather than run in XY. Segment intercepts actual XYZ projectile bodies and Parallax uses XYZ pull/damage. Reversible native turret subclasses alter only enemy selection, validation and predicted aim; ammo, reload, factory subtype and continuous-beam lifecycle remain inherited.",
+    "antiAir": "Air-capable native turret categories retain horizontal range R and gain configurable vertical envelope 5R by default. Ground-only weapons cannot acquire flying targets. Selection honors original filters/sorting and terrain LOS. Predictive aim solves constant-velocity interception in XYZ. Native range is a horizontal gate, with a bounded powered-flight extension for the tall anti-air envelope; instant/continuous rays receive the corresponding slant range only for eligible turret targets.",
+    "rangeDamage": "Horizontal displacement from the original emitter gives full damage through each native weapon's R. Host-configurable knee ratio, end ratio and knee power default to 1.2R, 1.5R and ten percent; the validated immutable profile requires 1 < knee < end and power in [0,1]. Projectiles, beams and lightning share the same profile. Range multiplies spent-age decay: at three spent seconds damage cannot exceed ten percent, at ten seconds it is zero. Children inherit the original range origin, limit and already-decayed power. Lightning contacts apply only additional range loss beyond their already-attenuated launch power, without applying the spent factor twice or recovering damage by turning back.",
+    "projectedDefense": "Canonical XYZ trace and family-aware traceLaser choose nearest eligible contact before damage. Ordinary projections pass piercing lasers; native absorbLasers walls (Plastanium) stop absorbing laser families. Rail and laserAbsorb=false flames bypass that wall rule. Sap selects one first physical target, with one drain including buildings; PointLaser and PointBullet retain endpoint-only damage. ForceProjector protection remains active independently. Native positive laser pierce caps, pulse intervals and damage depletion remain intact; terrain and bases are separate contacts.",
+    "spentDamage": "After powered range/lifetime, gravity increases to 9.81 tiles/s². Damage multiplier decays smoothly from 1 to .1 over three simulated seconds, then reaches zero at ten seconds. The multiplier also gates splash, lightning and children; a bounded cosmetic expiry replaces late phantom area damage. Pause freezes spent age. Native source BulletType objects remain unchanged.",
+    "coordinates": "Public gameplay X/Y are native horizontal tiles and Z is altitude. Projectile movement, swept target intersections, range and beam endpoints use XYZ. Renderer maps to X,Z,-Y.",
+    "hookAudit": "Pinned Mindustry 160.5 BulletType.create calls Bullet.add/type.init synchronously. Ordinary weapon create does not fire BulletCreateEvent; that event is only in network createBullet. Instant LaserBulletType damage therefore must be replaced before create.",
+    "activation": "Reversible proxy references replace all discovered Weapon.bullet and turret ammo/shootType slots during 3D play, including Build Mode and pause. Original BulletType fields are never changed. Native firing, ammo and cooldowns remain native. Turret target selection gains physical categories, range and LOS gates. A caller-supplied authority predicate permits server simulation and client visual replicas. Leaving 3D restores reference identity and retires managed shots without damage.",
+    "coverage": "Ordinary Basic/Missile/LaserBolt, artillery, bombs, flak, liquid, shrapnel, rail, point/sap/continuous rays, lightning and recursive payloads use physical XYZ paths. Every discovered unit and turret slot is bound. Specialized unknown callbacks are reinterpreted using public native metadata; unit-spawning missiles become physical projectile equivalents. Sticky attachment, custom suppression/power-network behavior and scheduled laser side-lightning are omitted instead of invoking damaging native XY callbacks. Mover positional offsets become swept horizontal contributions to the authoritative XYZ trajectory.",
+    "lightning": "Native chain lightning spawns stationary XY damage bullets at path samples and cannot be called for a physical XYZ parent. Own chains retain native damage, status, color, target categories and length budget, bounded to eight target hops. Every segment uses true cylinder/AABB/terrain collision; enemy insulated structures stop the chain. Native lightning path randomness is approximated by short wandering XYZ rays when no valid target is in range. No native Lightning.create or stationary XY damage bullet is emitted.",
+    "physicalState": "Native bullet identity/lifetime is retained, with a separate XYZ shot state. Native proxy XY collision/shield interception is disabled only on proxy types. Native health, armor, status and damage events are invoked only after a validated XYZ contact. Per-unit shields use native health damage APIs. Segment and Parallax have direct physical adapters; other native point-defense abilities do not intercept proxy bullets in XY.",
+    "aim": "Controlled unit uses supplied FPV camera direction plus original spread; native mount cone gating uses body-forward horizontal aim. Native turret targets receive bounded constant-velocity XYZ prediction, while native unit AI selection remains horizontal. Muzzle altitude follows authoritative physical pose or building roof. Recent owner poses are retained for death projectiles; a missing dead-owner pose suppresses damage instead of inventing a ground explosion.",
+    "terrainAndTeams": "Exact terrain triangle DDA is tested separately from tile-anchored building AABBs, including sleeping buildings. Enemy valid unit bodies are swept continuously as cylinders; friendly native pass-through rules apply. Beams stop at terrain, native laser-absorbing structures, original pierceCap or damage depletion; ordinary buildings remain pierceable. Native quadtrees bound each projectile query using one shared physical-size/speed-bound scan per native simulation update.",
+    "incendiary": "Native incendiary chance/count selects candidates using original spread, then checks each candidate's actual surface/top in XYZ before Fires.create. Aerial contact cannot ignite distant ground merely because XY matches. Liquid/puddle deposits and extinguishing require actual contact with the surface. Unknown suppression side effects are omitted safely.",
+    "trajectory": "Powered projectiles retain native speed and physical aim. Horizontal range or bounded powered lifetime transitions to falling with 9.81 tiles/s² gravity, drag and decaying damage. AA turret powered lifetime is multiplied by the configured slant-envelope ratio, capped at 120 seconds; spent age is always limited to ten seconds. Artillery/bombs retain their initial 2.4525 tiles/s² physical arc gravity. Pause freezes movement and expiration; cleanup cannot create a late phantom explosion.",
+    "payloads": "Fragments and interval children inherit their parent's actual XYZ position and pitch; original velocity/lifetime/random azimuth metadata remain, with recursion and per-event child counts bounded. Native horizontal random fragment spawn offsets are currently omitted. Area damage tests distance to each physical cylinder/AABB, and native health/armor/status/controller callbacks run only after that XYZ gate. Blast attenuation uses a physical radial approximation, not native XY tile flood attenuation. Large custom payload chains remain explicitly unsupported rather than emitting native XY damage.",
+    "lifecycle": "Native bullet init/update/removal own gameplay changes; system update ages only bounded transient visuals and prunes pooled identities. State clears on world changes and mode exit. Pause supplies zero simulation time. No save serialization, native grid mutation, game-code or asset redistribution.",
+    "visuals": "Immutable CombatVisual records expose actual canonical XYZ projectile tails, beam endpoints and short retained impact events. Renderer may enlarge visual thickness without enlarging physical damage geometry. Clients render authority-provided snapshots. Unbound external bullet emitters can still have native fallback visuals; bound weapon slots never silently delegate damaging custom callbacks to XY.",
+    "limits": "Native high-level unit AI/pathfinding and non-projectile abilities/environmental or unit-death damage are outside this adapter. Some specialized weapon identity is approximated by explicit metadata-driven XYZ replacements. Structure AABBs and unit cylinders approximate visual shapes; terrain is a height field. Native game code/assets are read locally, never packaged. Network packet/session enforcement belongs to the network module; this system only supplies authority gates and immutable visual snapshots.",
+    "stability011": "SimulationClock resamples both delta clocks at beforeGameUpdate after input can unpause/change scale. Native ContinuousTurret Infinity*zero can no longer poison beam aim on that transition. Finite validation remains; invalid muzzle/velocity/aim without live target cancels with rate-limited diagnostics; missing targets release safely. Direction normalization scales before squaring.",
+    "unitRange011": "Per-weapon native baselines and private proxy types prevent stacked/shared-content range bonuses. Ground defaults horizontal2, Dagger-Mace-Fortress-Scepter-Reign3, naval3, vertical5. Host settings are replicated. Native unit range/maxRange and weapon range agree with XYZ acquisition; controllable AI mounts and ordinary autonomous mounts validate height. Native weapon update/draw/reload/ammo/spread remain. Projectile powered lifetime covers the tall envelope; horizontal falloff uses the scaled effective range. Beams use direction-dependent slant reach; flyers and turrets do not receive ground multipliers.",
+    "crawler011": "Proxy preserves native killShooter metadata. After one authoritative XYZ payload, native health.kill synchronizes destruction; native totalShots guard prevents death-weapon duplication. Explosion actor retires immediately; ordinary crash suppression remains separate.",
+    "impactVisual011": "Laser rendering is threefold wider with unchanged physical radius/damage. Native splash radius and effective power scale a bounded XYZ explosion flash and six sparks; ordinary impacts use short debris/sparks. Pooled event records are capped at1024. A projectile emits at most one impact effect; sustained beams throttle impact visuals independently of native damage intervals."
+  },
+  "parameters": [
+    {
+      "name": "RANGE_KNEE_RATIO",
+      "value": 1.2,
+      "verification": "request"
+    },
+    {
+      "name": "RANGE_END_RATIO",
+      "value": 1.5,
+      "verification": "request"
+    },
+    {
+      "name": "RANGE_KNEE_POWER",
+      "value": 0.1,
+      "verification": "request"
+    },
+    {
+      "name": "AA_VERTICAL_MULTIPLIER",
+      "value": 5,
+      "verification": "request"
+    }
+  ],
+  "tests": [
+    "Swept cylinder/AABB hits and altitude misses, vertical shots, inside starts, grazing and long segments",
+    "XYZ range and aim normalization retain pitch and native spread",
+    "Instant laser is intercepted before native damage, continuous laser intervals do not double-hit",
+    "Both-team projectile contact and altitude miss, natural terrain occlusion, native building health/team rules",
+    "Original type flags and ammo/cooldown fields unchanged, references restore on exit, powered-to-falling lifecycle/clear/pause cleanup",
+    "Actual native T4/T5 ordinary gun, missiles, artillery, bomb, flak and Scepter lightning/interval coverage; high/low-altitude misses and aimed hits for both teams",
+    "Beyond-range continuation descends and still damages, high-altitude splash cannot damage ground merely sharing XY, child projectiles inherit XYZ"
+  ]
+}

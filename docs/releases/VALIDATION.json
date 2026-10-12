@@ -1,0 +1,32 @@
+{
+  "date": "2026-10-12",
+  "scope": "Release packaging only; no gameplay development",
+  "acceptedJarSha256": "d4f136ab7803966970ab50ef0d0150d895514aebff26dd343bd674c729582bc0",
+  "historicalAudit": {"commits": 39, "blobs": 1121, "maximumBlobBytes": 195798, "binaryBlobs": 0, "secretPatternMatchesInFileContents": 0, "privateGitAuthorIdentityPresent": true},
+  "jar": {"crc": "PASS", "entries": 982, "fpvClasses": 805, "jnaEntries": 152, "jnaByteComparison": "PASS", "hostOrLiftoffFiles": 0},
+  "legacyHelperByteComparison": "PASS",
+  "cleanSourceBuild": {
+    "status": "PASS",
+    "gameplayCommit": "556df2a8f2f3a7dc8dac2392bc825c39235c8cb5",
+    "javaTestProgramsPassed": 107,
+    "currentClassesCompared": 804,
+    "byteIdenticalClasses": 804,
+    "differentClasses": 0,
+    "legacyHelperByteIdentical": true,
+    "currentReferencesToLegacyHelper": 0,
+    "wholeJarReproducibilityClaimed": false,
+    "isolatedBuildReplacedAcceptedJar": false
+  },
+  "publicLauncher": {
+    "status": "PASS",
+    "windowsPowerShellVersion": "5.1",
+    "prerequisiteCasesPassed": 8,
+    "cases": ["paths with spaces/default JAR", "default fresh profile", "missing Java rejection", "stripped/non-17 runtime rejection", "wrong checksum rejection", "existing mod conflict protection", "same existing mod acceptance", "missing host rejection"],
+    "profilesChanged": false,
+    "interactiveGameLaunched": false
+  },
+  "archives": "PASS: complete ZIP CRC, strict file whitelist, per-entry/source-manifest bytes and unchanged accepted JAR; final checksums in dist/alpha-1.0.0/SHA256SUMS.txt",
+  "independentMultiplayer": "not tested",
+  "freshUserInteractiveInstall": "not tested",
+  "knownBroadSmokeFailure": "Flare fixed gun at +85 degrees; existing accepted JAR, not fixed in release preparation"
+}

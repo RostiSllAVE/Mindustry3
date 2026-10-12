@@ -1,0 +1,288 @@
+{
+  "schemaVersion": 1,
+  "id": "original-acro-flight",
+  "status": "approved implementation scope; initial tuning is not runtime-verified",
+  "descriptor": "fpv.flight.FlightController.Profile",
+  "generation": "Generate a Profile constructor call in the exact parameter order below. No fallback/default tuning values belong in handwritten flight code.",
+  "coordinateConvention": "Right-handed Y-up render world; local forward -Z, local up +Y. Distances are Mindustry tiles. Positive pitch raises the nose (+local X); positive roll banks right (-local Z); positive yaw turns right (-local Y). Reset yaw uses the same positive-right convention.",
+  "verificationLegend": {
+    "design-verified": "Explicit, dimensionally reviewed initial design value; suitable for prototype build, not evidence of flight feel or runtime acceptance.",
+    "request": "Required by the approved Mindustry-hosted FPV design.",
+    "test-pending": "An executable acceptance check exists but has not run."
+  },
+  "parameters": [
+    {
+      "name": "metersPerTile",
+      "value": 2.0,
+      "unit": "m/tile",
+      "verification": "design-verified",
+      "reason": "Explicit scale shared by all force/drag calculations; renderer still uses one unit per tile."
+    },
+    {
+      "name": "massKg",
+      "value": 0.65,
+      "unit": "kg",
+      "verification": "design-verified",
+      "reason": "Original generic quad mass, not an extracted Liftoff drone."
+    },
+    {
+      "name": "inertiaXKgM2",
+      "value": 0.004,
+      "unit": "kg*m^2",
+      "verification": "design-verified",
+      "reason": "Positive body pitch inertia."
+    },
+    {
+      "name": "inertiaYKgM2",
+      "value": 0.007,
+      "unit": "kg*m^2",
+      "verification": "design-verified",
+      "reason": "Positive body yaw inertia."
+    },
+    {
+      "name": "inertiaZKgM2",
+      "value": 0.004,
+      "unit": "kg*m^2",
+      "verification": "design-verified",
+      "reason": "Positive body roll inertia."
+    },
+    {
+      "name": "maxThrustNewtons",
+      "value": 22.0,
+      "unit": "N",
+      "verification": "design-verified",
+      "reason": "A full-throttle thrust/weight ratio of about 3.45; aggregate original motor model."
+    },
+    {
+      "name": "gravityMps2",
+      "value": 9.80665,
+      "unit": "m/s^2",
+      "verification": "design-verified",
+      "reason": "Standard gravity; converted to tile units with metersPerTile."
+    },
+    {
+      "name": "linearDragPerSecond",
+      "value": 0.08,
+      "unit": "1/s",
+      "verification": "design-verified",
+      "reason": "Low-speed velocity damping with retained momentum."
+    },
+    {
+      "name": "quadraticDragPerMeter",
+      "value": 0.02,
+      "unit": "1/m",
+      "verification": "design-verified",
+      "reason": "Acceleration magnitude proportional to squared speed in SI units."
+    },
+    {
+      "name": "angularDragPerSecond",
+      "value": 0.03,
+      "unit": "1/s",
+      "verification": "design-verified",
+      "reason": "Body angular damping independent of commanded rates."
+    },
+    {
+      "name": "motorTimeConstantSeconds",
+      "value": 0.065,
+      "unit": "s",
+      "verification": "design-verified",
+      "reason": "Exponential aggregate thrust response rather than instantaneous thrust."
+    },
+    {
+      "name": "rateResponseSeconds",
+      "value": 0.045,
+      "unit": "s",
+      "verification": "design-verified",
+      "reason": "Rate error produces inertial torque through a proportional controller; no auto-level term."
+    },
+    {
+      "name": "maxTorqueNewtonMeters",
+      "value": 0.45,
+      "unit": "N*m per axis",
+      "verification": "design-verified",
+      "reason": "Explicit torque saturation bounds rotational acceleration."
+    },
+    {
+      "name": "pitchRateDegreesPerSecond",
+      "value": 360.0,
+      "unit": "deg/s",
+      "verification": "design-verified",
+      "reason": "Initial pitch rate limit, configurable independently."
+    },
+    {
+      "name": "rollRateDegreesPerSecond",
+      "value": 480.0,
+      "unit": "deg/s",
+      "verification": "design-verified",
+      "reason": "Initial roll rate limit, configurable independently."
+    },
+    {
+      "name": "yawRateDegreesPerSecond",
+      "value": 240.0,
+      "unit": "deg/s",
+      "verification": "design-verified",
+      "reason": "Initial yaw rate limit, configurable independently."
+    },
+    {
+      "name": "rateExpo",
+      "value": 0.35,
+      "unit": "fraction [0,1]",
+      "verification": "design-verified",
+      "reason": "Original cubic blend: (1-expo)*input + expo*input^3; not a claim of Betaflight/Liftoff rate-profile compatibility."
+    },
+    {
+      "name": "fixedStepSeconds",
+      "value": 0.004,
+      "unit": "s",
+      "verification": "design-verified",
+      "reason": "250 Hz fixed integration; render dt accumulates independently."
+    },
+    {
+      "name": "maxFrameSeconds",
+      "value": 0.1,
+      "unit": "s",
+      "verification": "design-verified",
+      "reason": "At most 25 physics steps per invocation; excess wall time is deliberately discarded after stalls."
+    }
+  ],
+  "behavior": {
+    "verification": "design-verified",
+    "model": "Original six-degree-of-freedom rigid body with body-frame angular velocity, Euler rigid-body torque/inertia coupling, quaternion attitude, gravity, isotropic linear/quadratic drag, aggregate thrust lag, and a proportional angular-rate controller.",
+    "input": "Finite throttle clamped to [0,1], finite pitch/roll/yaw clamped to [-1,1]. dt must be finite and nonnegative. Inputs in a call are held for all accumulated fixed steps processed by that call.",
+    "reset": "Clear velocities, angular rates, motor thrust and fractional timestep remainder; set position and yaw. Reset starts disarmed/spooled down, so hover throttle has a short initial drop.",
+    "state": "Public mutable pose/velocity for the game adapter. Adapter must keep it finite and quaternion normalized when editing orientation. No terrain collision, world bounds, player health, unit movement or time scaling lives here.",
+    "time": "Pass desired flight elapsed seconds. Build Mode holds pose by not stepping, without queuing its wall time. Invalid negative/nonfinite dt throws; a stalled frame discards elapsed time above maxFrameSeconds.",
+    "vectors": "getForward, getUp and rotateLocal write three doubles to a caller-owned array and allocate no vectors.",
+    "runtimeRates": "configureRates(pitchDegreesPerSecond,rollDegreesPerSecond,yawDegreesPerSecond,expo) replaces the active original rate curve on the owning simulation thread. Rates must be finite and positive; expo must be finite in [0,1]. Validate all four values before applying any. Construction starts from the same 19-field Profile defaults; reset preserves active rates. Configuration changes preserve pose, velocity, motor response and accumulated timestep, and take effect on the next integrated step. This is the existing cubic blend, not a Liftoff/Betaflight profile importer.",
+    "runtimePerformance": "configureProfile(Profile) applies a validated immutable physical/rate profile while preserving full State, aggregate motor spool and fractional step. metersPerTile, fixedStepSeconds and maxFrameSeconds must match the current profile. Native-unit metadata and user preset/custom modifiers are resolved by FlightProfile/FlightSettings from performance.sheet.json; no force or speed is assigned to native UnitType.",
+    "substepObserver": "The original five-argument step delegates to the overload with a null StepObserver. afterStep(State, oldX, oldY, oldZ, stepSeconds, elapsedWithinFrame) runs synchronously immediately after every fixed integration step, so the adapter can sweep each curved-path segment and correct position/velocity before the next integration. The observer receives the existing mutable State and allocates no per-step objects. All coordinates use the canonical Y-up render axes and tile units. elapsedWithinFrame is the start offset of this segment within the accepted current frame: max(0, index*fixedStepSeconds-carriedRemainder). It excludes the fractional time retained from the previous call; a first step straddling that remainder reports zero, although stepSeconds remains the full fixed step. Callbacks may edit finite position/velocity but must not recursively step/reset/reconfigure the controller or edit attitude/angular rates. There are no callbacks when no full step is available. Callback failures propagate, and nonfinite callback state fails immediately. Collision/damage policy remains in the adapter.",
+    "limits": "Aggregate rotor torque and thrust are separately bounded for this prototype; not a four-motor mixer, aerodynamics simulator, or Liftoff-equivalent implementation. Camera tilt is owned by the integration layer."
+  },
+  "acceptance": [
+    {
+      "id": "gravity",
+      "verification": "unit-tested",
+      "runtimeVerified": false,
+      "criterion": "Level zero-throttle freefall agrees with semi-implicit fixed-step gravity and explicit metersPerTile scaling."
+    },
+    {
+      "id": "hover",
+      "verification": "unit-tested",
+      "runtimeVerified": false,
+      "criterion": "After deterministic spin-up/reset of translational drift, weight-balancing throttle holds altitude within tolerance."
+    },
+    {
+      "id": "acro",
+      "verification": "unit-tested",
+      "runtimeVerified": false,
+      "criterion": "Roll input banks the craft; neutral input damps angular rates without leveling its attitude."
+    },
+    {
+      "id": "yaw",
+      "verification": "unit-tested",
+      "runtimeVerified": false,
+      "criterion": "Positive yaw turns right from -Z, preserving up; reset yaw has matching convention."
+    },
+    {
+      "id": "finite",
+      "verification": "unit-tested",
+      "runtimeVerified": false,
+      "criterion": "Long bounded acro input sequence stays finite with unit quaternion; invalid inputs are rejected."
+    },
+    {
+      "id": "timestep",
+      "verification": "unit-tested",
+      "runtimeVerified": false,
+      "criterion": "Constant commands over equal time give matching states across 250 Hz, 125 Hz and 60 Hz frame delivery."
+    },
+    {
+      "id": "bounded-dt",
+      "verification": "unit-tested",
+      "runtimeVerified": false,
+      "criterion": "A very large frame matches one maxFrameSeconds call; negative and nonfinite dt fail explicitly."
+    },
+    {
+      "id": "profile",
+      "verification": "unit-tested",
+      "runtimeVerified": false,
+      "criterion": "Nonfinite/nonphysical tuning values and excessive substep budgets fail at construction."
+    },
+    {
+      "id": "runtime-rates",
+      "verification": "test-pending",
+      "runtimeVerified": false,
+      "criterion": "Original 20 versus 400 deg/s commands produce distinct converged angular rates on each axis; shared expo reduces half-stick response while retaining full-stick authority; invalid updates leave the last valid tuning intact; reconfiguration and reset retain the documented integration/configuration state."
+    },
+    {
+      "id": "substep-observer",
+      "verification": "test-pending",
+      "runtimeVerified": false,
+      "criterion": "No-op observers preserve exact state; callbacks expose every bounded 250 Hz path segment with correct prior position and current-frame time offsets including a carried fractional step. Position/velocity corrections affect the next substep, curved intermediate positions remain observable, and nonfinite corrections fail explicitly."
+    }
+  ],
+  "runtimeVerified": false,
+  "unitMotionAdapter": {
+    "descriptor": "fpv.flight.UnitMotionBridge",
+    "verification": "design-verified",
+    "runtimeVerified": false,
+    "target": "Pinned Mindustry 160.5; local flying player unit only, original VelComp/UnitComp/PhysicsProcess stay installed.",
+    "units": "Flight x,z and vx,vz are tiles and tiles/second. Native unit XY and velocity are world units and world units/tick. Conversion uses Vars.tilesize and Time.toSeconds, not duplicate numeric tuning.",
+    "callOrder": [
+      "syncFromSimulation(unit,state) once before each flight.step, after AsyncCore.begin; it imports authoritative unit position and only native velocity changes since the adapter's last publication.",
+      "Compute desired sidecar flight step and presentation collisions without writing unit XY.",
+      "beforeSimulation(unit,state,Time.delta,holdPose) once before original Logic entity update; Time.delta is the actual scaled native delta in ticks. This writes velocity only, never unit XY.",
+      "Original VelComp integrates the horizontal displacement exactly once, using native move/collision. Other original entities may add knockback before or after that update.",
+      "afterSimulation(unit,state) at Trigger.afterGameUpdate reconciles the actual XY result, absorbs velocity residual relative to the known native drag baseline, and publishes the new horizontal flight velocity for native targeting.",
+      "release(unit,state) on handing control back to 2D; reset() on death, unit identity change, explicit recover, or world reset. Release preserves horizontal momentum; reset only forgets bookkeeping."
+    ],
+    "displacement": "Command native velocity is (desired world position minus current original position)/scaled delta ticks. The desired position is not assigned directly. At zero delta no native motion command is queued and sidecar XY reconciles to the unit.",
+    "nativeDrag": "Record command velocity times max(1 - unit.drag*deltaTicks,0) as the expected VelComp velocity after its normal drag operation. Difference between actual post-simulation velocity and that baseline is an external/native change added once to flight velocity. This avoids applying both native unit drag and FPV aerodynamic drag to the controlled base motion.",
+    "blockedAxis": "Match native VelComp's unchanged-position axis test when deriving the expected drag baseline; a genuinely blocked commanded axis clears the sidecar velocity on that axis before adding any residual native impulse.",
+    "holdPose": "Build/focus hold queues zero controller displacement and publishes zero commanded velocity; original collision/impulse displacement remains authoritative. Sidecar inertia is retained and native impulses accumulate there for flight resumption. This is control hold, not immunity from native damage or an enforced teleport.",
+    "lifecycle": "One queued command per original simulation update. Reject overlapping before calls; callers must cancel/release if a queued update is skipped. No removal/replacement of unit, health, controller, type or physics body.",
+    "limitations": "The residual adapter assumes this version's VelComp order and drag behavior. Custom UnitType update code or other mods that replace velocity remain compatibility cases. Persistent forces are interpreted as native velocity changes. Original XYZ combat is unchanged; runtime tests must prove actual unit update ordering and pause transitions.",
+    "acceptance": [
+      {
+        "id": "single-integration",
+        "verification": "runtime-tested",
+        "criterion": "A known FPV displacement moves native XY by that displacement once, with nonzero native velocity visible during simulation."
+      },
+      {
+        "id": "native-impulse",
+        "verification": "runtime-tested",
+        "criterion": "Apply a native impulse before and after unit integration; reconcile its post-drag residual once, then verify no next-frame duplicate injection."
+      },
+      {
+        "id": "native-correction",
+        "verification": "test-pending",
+        "criterion": "An AsyncCore collision position correction or original bounds correction is retained by next frame's sidecar state."
+      },
+      {
+        "id": "no-double-drag",
+        "verification": "runtime-tested",
+        "criterion": "With no external impulses, the native drag operation creates no artificial sidecar acceleration/deceleration."
+      },
+      {
+        "id": "hold-release",
+        "verification": "runtime-tested",
+        "criterion": "Build/focus hold does not move from stored FPV momentum; native displacement still reconciles; release to 2D transfers momentum once."
+      }
+    ],
+    "sources": [
+      "https://github.com/Anuken/Mindustry/blob/v160.5/core/src/mindustry/entities/comp/VelComp.java",
+      "https://github.com/Anuken/Mindustry/blob/v160.5/core/src/mindustry/entities/comp/UnitComp.java",
+      "https://github.com/Anuken/Mindustry/blob/v160.5/core/src/mindustry/async/PhysicsProcess.java",
+      "https://github.com/Anuken/Mindustry/blob/v160.5/core/src/mindustry/core/Logic.java"
+    ],
+    "testResults": {
+      "scripted": "passed actual native unit APIs",
+      "asynchronousSolver": "not tested"
+    }
+  },
+  "provenance": "Original implementation from general rigid-body/acro concepts. No proprietary Liftoff assemblies, code, parameters or assets copied. The numeric profile is initial project tuning.",
+  "testResults": {
+    "pureModel": "Previous 131 assertions passed; new runtime-rates checks pending root preflight/build",
+    "nativeAdapter": "actual Unit.update/move/impulse assertions passed",
+    "physicalFlightFeel": "not tested"
+  }
+}

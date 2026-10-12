@@ -1,0 +1,172 @@
+{
+  "schemaVersion": 1,
+  "id": "native-fpv-input",
+  "targetMindustry": "160.5",
+  "descriptor": "fpv.input.FpvDesktopInput.Policy",
+  "status": "approved implementation scope; runtime verification pending",
+  "generation": "Generate Policy from the parameters in order. Binding names refer to public static mindustry.input.Binding fields and must resolve before installing the adapter.",
+  "parameters": [
+    {
+      "name": "fpvBlockedBindings",
+      "value": [
+        "moveX",
+        "moveY",
+        "mouseMove",
+        "pan",
+        "detachCamera",
+        "teleportCursor",
+        "zoom",
+        "playerList",
+        "togglePowerLines",
+        "toggleBlockStatus"
+      ],
+      "verification": "design-verified",
+      "reason": "FPV owns movement/camera; Tab, F5 and F6 are reserved by this initial single-player profile."
+    },
+    {
+      "name": "flightBlockedBindings",
+      "value": [
+        "select",
+        "deselect",
+        "breakBlock",
+        "control",
+        "clearBuilding",
+        "pauseBuilding",
+        "rotate",
+        "rotatePlaced",
+        "diagonalPlacement",
+        "pick",
+        "ping",
+        "rebuildSelect",
+        "schematicSelect",
+        "schematicFlipX",
+        "schematicFlipY",
+        "commandMode",
+        "commandQueue",
+        "createControlGroup",
+        "selectAllUnits",
+        "selectAllUnitFactories",
+        "selectAllUnitTransport",
+        "selectAcrossScreen",
+        "categoryPrev",
+        "categoryNext",
+        "blockSelectLeft",
+        "blockSelectRight",
+        "blockSelectUp",
+        "blockSelectDown",
+        "blockSelect01",
+        "blockSelect02",
+        "blockSelect03",
+        "blockSelect04",
+        "blockSelect05",
+        "blockSelect06",
+        "blockSelect07",
+        "blockSelect08",
+        "blockSelect09",
+        "blockSelect10"
+      ],
+      "verification": "design-verified",
+      "reason": "Native world editing/selection cannot consume flight input. Firing is explicitly forwarded from the unfiltered select binding to original unit weapons."
+    },
+    {
+      "name": "pointerBlockedBindings",
+      "value": [
+        "select",
+        "deselect",
+        "breakBlock",
+        "control",
+        "pick",
+        "ping",
+        "rebuildSelect",
+        "schematicSelect",
+        "commandQueue",
+        "rotatePlaced"
+      ],
+      "verification": "design-verified",
+      "reason": "Invalid rays, UI hits, keyboard focus and active dialogs cannot initiate or finish world actions."
+    },
+    {
+      "name": "payloadRepeatMilliseconds",
+      "value": 20,
+      "verification": "design-verified",
+      "reason": "Preserves the pinned DesktopInput payload repeat interval in the movement adapter."
+    },
+    {
+      "name": "payloadHoldDelayMilliseconds",
+      "value": 200,
+      "verification": "design-verified",
+      "reason": "Preserves the pinned DesktopInput payload initial hold delay."
+    }
+  ],
+  "implementation": {
+    "verification": "design-verified",
+    "class": "fpv.input.FpvDesktopInput extends mindustry.input.DesktopInput",
+    "projection": "Wrap Core.input with a delegating Input sharing the original keyboard and multiplexer. Only mouseWorld/mouseScreen projection and selected native KeyBind polling differ; physical screen coordinates, raw KeyCode polling and event delivery remain native.",
+    "packagePrivateCaveat": "Do not rely on overriding tileX/tileY/tileAt or pollInputPlayer: the native mod class loader and host class loader do not share a Java runtime package even with the same textual package name.",
+    "oneAxisProjection": "Native tileX(cursorX,0) and tileY(0,cursorY) assume orthographic separability. In FPV all mouseWorld overloads return the current perspective cursor hit, allowing native offset subtraction and World.toTile to stay authoritative. This adapter contract targets the current desktop cursor, not arbitrary screen-point unprojection.",
+    "pickInvalid": "Hold the last finite point for non-mutating UI layout; world actions are blocked and pending drags are cancelled. A first pick starts from the live player position. In Flight the parent may explicitly supply a finite horizontal weapon aim on sky misses without marking the build pick valid.",
+    "buildUi": "Native UI, block selection, BuildPlan queues, resource/range checks, dragging, rotation, demolition, mining and configuration remain in DesktopInput/InputHandler. A renderer projector callback aligns native inventory and plan-config panels with 3D world points.",
+    "flightMovement": "Skip vanilla movement and rotation while FPV owns the unit. Preserve native weapon aiming/control, boosting and payload actions explicitly. Do not mutate unit position, velocity or health in this adapter.",
+    "uiOcclusion": "Scene mouse/keyboard/dialog focus and invalid ray cancel an uncommitted line/removal drag before native input polling. Existing committed queues remain intact. A pointer press begun over UI cannot become a world action by dragging away.",
+    "modeTransitions": "Cancel transient line/selection/command drag on transitions; retain selected block, schematic preview and committed build queues. Clear firing on transitions and explicit focus suspension. Core.input restoration checks identity before restoring the wrapped original.",
+    "controls": "Parent integration owns F5 view, Tab Build, cursor/focus, F7 first/chase/rear and F9 Acro/Stabilized. Stabilized and ground WASD follow horizontal pilot heading. Grounded Legsc uses Q/E stance; ordinary ground/naval/hover use native movement restrictions; ControlBlock turrets never translate. F8 requests per-instance creator flight only if the host enables Allow ground-unit flight (default OFF); Q/E then descends/ascends actual XYZ. Native validated possession remains available in Build Mode. Build/menu suppress firing and retain stance ownership. Original 2D input delegates unchanged when FPV is disabled."
+  },
+  "sources": [
+    "research/Mindustry/core/src/mindustry/input/DesktopInput.java",
+    "research/Mindustry/core/src/mindustry/input/InputHandler.java",
+    "research/Mindustry/core/src/mindustry/core/Control.java",
+    "research/Mindustry/core/src/mindustry/input/Binding.java",
+    "research/Arc/arc-core/src/arc/Input.java",
+    "research/Arc/backends/backend-sdl/src/arc/backend/sdl/SdlApplication.java"
+  ],
+  "acceptance": [
+    {
+      "id": "world-picking",
+      "criterion": "Single and even-sized block native tile coordinates follow ray hit with native block.offset; drag conveyors across changed tiles.",
+      "runtimeVerified": false
+    },
+    {
+      "id": "native-queues",
+      "criterion": "Placement/removal/configuration preserve original validation, costs, build range and BuildPlan queues.",
+      "runtimeVerified": false
+    },
+    {
+      "id": "ui-occlusion",
+      "criterion": "Press over UI then drag into world does nothing; release active drag over UI or invalid sky cancels uncommitted line/removal.",
+      "runtimeVerified": false
+    },
+    {
+      "id": "movement-boundary",
+      "criterion": "FPV adapter never calls unit.movePref or changes unit position/velocity; 2D fallback resumes original DesktopInput movement.",
+      "runtimeVerified": false
+    },
+    {
+      "id": "weapons-payload",
+      "criterion": "Original weapons aim/fire and cargo keys work while flight owns movement; UI/focus changes clear firing.",
+      "runtimeVerified": false
+    },
+    {
+      "id": "ui-projection",
+      "criterion": "Native inventory and plan configuration panels track renderer world-to-screen projection.",
+      "runtimeVerified": false
+    },
+    {
+      "id": "input-api-smoke",
+      "criterion": "In the loaded isolated game verify host tileX/tileY/tileAt through reflection, even-sized native offset, actual native line planner, committed queue preservation, invalid-pick and keyboard-focus action rejection, event/physical-input delegation, and rejected unknown policy bindings. Restore all touched input/queue/UI state in finally.",
+      "runtimeVerified": false
+    }
+  ],
+  "runtimeVerified": false,
+  "testResults": {
+    "scriptedRuntime": "passed on two native maps; see local/smoke/results.json",
+    "physicalPlaytest": "pending; overall runtimeVerified remains false until full acceptance"
+  },
+  "flightCommandModePolicy": {
+    "verification": "design-verified",
+    "behavior": "Clear native commandMode on FPV/Build transitions and command exit so native canShoot is not stuck false. In explicit FPV Command Mode only, the 3D adapter owns commandMode and reads the original command binding once per frame; native selectedUnits and validated commandUnits RPCs remain authoritative. Close native config/inventory/plan popups via native APIs on leaving Build."
+  },
+  "groupCommandMode": {
+    "verification": "user-approved",
+    "behavior": "Flight uses native commandMode binding (default Shift), respecting commandmodehold and native boost-binding conflict. F10 toggles Command Mode from Flight or Build; Build Shift retains linking. Screen drag selects visible canonical XYZ units; LMB selection, RMB order, native commandQueue binding, Escape cancellation. Preserve team/CommandAI rules, queued build plans and selected block/rotation; fence held pointer on exit until release. No new AI or network protocol; native movement commands retain XY destinations."
+  }
+}

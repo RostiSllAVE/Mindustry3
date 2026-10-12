@@ -1,0 +1,79 @@
+{
+  "schemaVersion": 1,
+  "descriptor": "fpv.defense.ProjectedWallSystem / LegTraversal / fpv.render.ProjectedWallRenderer",
+  "verification": "design-verified",
+  "runtimeVerified": false,
+  "sourceOfTruth": "A sidecar keyed by actual native Tile.build anchors, independent of Groups.build, enabled state and sleep. Wall inheritance or native BlockGroup.walls metadata identifies defensive walls; open doors have no active projection. Original base health, size, team, native AI/pathfinding and save remain unchanged.",
+  "projection": "One separate pool per native wall, default85 percent of native maxHealth. Upper volume starts at physical wall top and is five base-height segments at full health. Remaining pool proportion shrinks the effective top continuously and reduces opacity. Zero removes all upper geometry/collision; native base survives. No duplicate building entities or per-segment health.",
+  "combat": "Canonical XYZ expanded-AABB sweep returns nearest enemy projection contact. Friendly shots pass in either direction; true overflight passes. Contact tokens validate native object/block/team and current height before damage. Server authority alone mutates pools. Regen uses simulation seconds after damage delay; pause is frozen. Unit collision is independent, default disabled, with legged units excluded.",
+  "network": "Complete immutable snapshots carry native anchor/block/team, pool HP/maxHP, damage cooldown, authoritative baseZ/full topZ and revision. Clients validate all records before atomic replacement, never regenerate/damage locally. Removal/replacement cannot keep ghost volumes. Pool sidecars reset on world reload; no native save extension.",
+  "render": "Persistent 16-tile chunk surface arrays merge compatible coplanar same-team wall spans and omit fully/partially covered interior faces. Native atlas artwork repeats in the shader over unchanged wall-height intervals. Only changed wall/neighbor chunks rebuild; fog fingerprints and frustum rejection precede bounded shared-atlas submission. clear() resets frame diagnostics; invalidate() clears retained geometry.",
+  "ground": "Native allowLegStep metadata and leg/crawler capability select per-unit support over physical placed walls within configured step height, derived from legLength and legLengthScl. Projected segments never become ground. Ordinary ground keeps terrain-only support and original native collision. Flying support unchanged. No global UnitType mutation; canonical altitude state receives the same support used by collisions and rendering.",
+  "parameters": [
+    {
+      "name": "PROJECTION_HEALTH_MULTIPLIER",
+      "value": 0.85,
+      "verification": "design-verified"
+    },
+    {
+      "name": "PROJECTION_SEGMENTS",
+      "value": 5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "REGEN_DELAY_SECONDS",
+      "value": 8,
+      "verification": "design-verified"
+    },
+    {
+      "name": "REGEN_FRACTION_PER_SECOND",
+      "value": 0.025,
+      "verification": "design-verified"
+    },
+    {
+      "name": "PROJECTION_BLOCKS_UNITS",
+      "value": 0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "LEG_STEP_HEIGHT_MULTIPLIER",
+      "value": 1.5,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_LEG_STEP_HEIGHT",
+      "value": 8,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CHUNK_TILES",
+      "value": 16,
+      "verification": "design-verified"
+    },
+    {
+      "name": "PROJECTION_ALPHA",
+      "value": 0.31,
+      "verification": "design-verified"
+    },
+    {
+      "name": "PROJECTION_MIN_ALPHA",
+      "value": 0.09,
+      "verification": "design-verified"
+    },
+    {
+      "name": "PROJECTION_TEXTURE_CUTOFF",
+      "value": 0.04,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_SNAPSHOT_ENTRIES",
+      "value": 262144,
+      "verification": "design-verified"
+    }
+  ],
+  "optimization": "Primitive-long spatial buckets and reusable candidate stamps traverse ray-crossed chunks rather than the whole swept XY rectangle. Exact per-wall XYZ slabs and contact tokens preserve individual projection HP and friendly pass-through. Cached per-state Volume lookups are O(1); explicit initialization works when native tileChanges is -1. Local geometry invalidation tracks placement, removal, HP, owner and door solidity.",
+  "profile": "Opt-in -Dfpv.wallProfile=true records native loaded real-base counts, frame/update/query/render CPU cost, actual atlas draws/vertices/uploads, cached rebuilds and ThreadMXBean allocation bytes. Baseline, spatial-only and full optimized artifacts/results are preserved separately under local/wall-profile. Timing is benchmark work, not a promise of interactive FPS.",
+  "nearestProjectionCompositor": "A private RGBA/depth framebuffer receives a GPU-only copy of the existing opaque scene depth. Projection blending is disabled and private depth writes select the nearest valid surface at each pixel. One straight-alpha composition overlays that color on the unchanged scene; main world depth is never modified. Rear side/top regions remain visible where uncovered, alpha-cutout holes remain valid openings, collapsed pools contribute no coverage, and double-sided boundaries remain visible from inside. Matching-depth framebuffer blit is preferred; GPU depth-texture copy plus opaque-depth shader rejection is the tested fallback. No gameplay visibility changes or routine pixel readbacks.",
+  "compositorValidation": "Paired instrumented overlays over exact verified 0.9.0 release, same copied real 430x430 base with 5292 walls: local/wall-profile/corrections-before and corrections-after1. Both preserve tiles and pass 2048 exhaustive collision comparisons. After passes 11 deterministic GPU pixel assertions for nearest-only overlap, alpha, exposed rear regions, opaque depth, order independence, collapse, inside winding, depth-copy fallback equivalence and unchanged scene depth. GPU time comes from asynchronous available-only GL_TIME_ELAPSED queries, not CPU estimates.",
+  "compositorMeasuredTradeoff": "The corrected path adds one fullscreen composition draw and one GPU depth copy; geometry counts are unchanged. Near wall CPU 0.619 -> 0.897 ms and GPU elapsed 0.065 -> 0.211 ms; overview CPU 1.883 -> 1.884 ms and GPU elapsed 1.244 -> 1.296 ms on the measured machine. Reduced overbrightness is a correctness improvement, not a claim of universal FPS improvement."
+}

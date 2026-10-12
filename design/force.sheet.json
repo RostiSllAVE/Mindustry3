@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "descriptor": "fpv.defense.ForceProjectorSystem / ForceGeometry / fpv.render.ForceProjectorRenderer",
+  "verification": "design-verified",
+  "runtimeVerified": false,
+  "sourceOfTruth": "Existing ForceProjector.ForceBuild fields own buildup, broken, warmup, phaseHeat and radscl. Native updateTile retains power, coolant, phase consumption and cooldown. No additional shield HP pool or native map mutation.",
+  "geometry": "Closed vertical regular-polygon prism using actual native sides, shieldRotation and realRadius. Bottom is terrain at projector center; top is bottom plus realRadius. Same explicit vertices define graphics and convex swept collision. Bullet radius expands faces; enemy shots beginning inside are absorbed immediately. Friendly shots pass in both directions; overflight and underflight outside the finite volume pass.",
+  "combat": "CompositeDefense chooses nearest real contact between existing projected walls and ForceProjector volumes. Authoritative managed projectiles, instantaneous/continuous lasers and lightning use the common contact boundary. Native shieldDamageMultiplier scales absorbed contact power. Immediate native broken/buildup state prevents another hit after exhaustion. Native radius/power fade and recovery remain intact; managed proxies are already non-absorbable to native XY scans.",
+  "network": "Only authority applies contact buildup; bounded complete records contain native anchor/block/team plus native buildup, broken, warmup, phaseHeat, hit and radscl. Client validates the complete message before application and uses accepted records for visual shell state. Missing or replaced anchors cannot retain a shell. Native fields already persist in native ForceBuild save format.",
+  "render": "One bounded streaming color mesh renders exact translucent polygon side faces and top cap, with team-colored edges and native hit flash. Fog/frustum checked. No proprietary art, no per-shield GPU allocation, all changed GL state restored.",
+  "parameters": [
+    {"name":"HEIGHT_RADIUS_MULTIPLIER","value":1,"verification":"design-verified"},
+    {"name":"MAX_SIDES","value":64,"verification":"design-verified"},
+    {"name":"MAX_SNAPSHOT_ENTRIES","value":262144,"verification":"design-verified"},
+    {"name":"BUFFER_VERTICES","value":24576,"verification":"design-verified"},
+    {"name":"FILL_ALPHA","value":0.045,"verification":"design-verified"},
+    {"name":"EDGE_ALPHA","value":0.42,"verification":"design-verified"},
+    {"name":"FLASH_ALPHA","value":0.22,"verification":"design-verified"},
+    {"name":"EDGE_RADIUS_FRACTION","value":0.0015,"verification":"design-verified"}
+  ]
+}

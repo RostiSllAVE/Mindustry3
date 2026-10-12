@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "component": "natural-wall-terrain-elevation",
+  "targetMindustry": "160.5",
+  "state": "incremental-implementation",
+  "descriptor": "fpv.generated.TerrainConfig",
+  "verification": "design-verified",
+  "runtimeVerified": false,
+  "generation": "Generate public static final double fields for all numeric parameter rows before compiling. Adapter builds pure TerrainHeightField.Parameters from these values.",
+  "sourceOfTruth": "Read-only original world tile grid. StaticWall instances except StaticTree, with no Building, form the mask. Player-built defense Wall blocks, trees, decorations, floors and structures never generate mountains. No floor, block, overlay, team, save or pathfinding writes.",
+  "algorithm": "Exact Euclidean distance to nearest non-wall tile center, including a virtual open border. Distance layers feed a bounded exponential rise with broad deterministic value-noise modulation. Repeated weighted smoothing uses natural-wall neighbors only. Shared corners average adjacent natural cell heights. Isolated wall cells retain the minimum cliff height.",
+  "coordinates": {
+    "tileCenter": "(tileX, altitudeTiles, -tileY)",
+    "corner": "(cornerX - 0.5, height, -(cornerY - 0.5))",
+    "tileCornerOrder": "0=(x,y), 1=(x+1,y), 2=(x+1,y+1), 3=(x,y+1), in integer corner coordinates",
+    "triangles": "0,1,2 and 0,2,3; diagonal from southwest to northeast in native game XY",
+    "ownership": "floor(renderX + 0.5), floor(-renderZ + 0.5), half-open cells",
+    "surface": "Piecewise linear within the exact two rendered triangles. Non-wall cells return zero even if incident shared raw vertices are elevated. Natural/open borders are intentional vertical cliffs rendered by the consumer; natural-to-natural edges are continuous. Raw vertexHeight is used only when drawing natural tiles."
+  },
+  "lifecycle": "Lazy rebuild when world tiles identity or dimensions change, explicit world invalidation, or tile event changes natural/non-natural membership. Ordinary building edits that do not change the mask do not rebuild terrain. Revision increments only after a new immutable generated field is installed. Consumer renderer must invalidate all terrain chunks after revision changes. Rebuild is deterministic and does not depend on simulation time or random state.",
+  "parameters": [
+    {"name":"MINIMUM_HEIGHT_TILES","value":0.85,"verification":"design-verified","unit":"tiles"},
+    {"name":"RISE_PER_LAYER","value":1.15,"verification":"design-verified","unit":"tiles per erosion layer before soft cap"},
+    {"name":"MAXIMUM_HEIGHT_TILES","value":30.0,"verification":"design-verified","unit":"tiles"},
+    {"name":"SMOOTHING_PASSES","value":3,"verification":"design-verified","unit":"passes"},
+    {"name":"HEIGHT_VARIATION","value":0.23,"verification":"design-verified","unit":"fraction of height above minimum"},
+    {"name":"VARIATION_SCALE_TILES","value":18.0,"verification":"design-verified","unit":"tiles"}
+  ],
+  "acceptance": [
+    "No source mask or native map writes",
+    "Exact nearest non-wall distances agree with brute-force small maps",
+    "Deeper broad regions rise above edge and isolated tiles",
+    "Adjacent natural tiles share exact vertex heights",
+    "Triangle interpolation agrees with renderer and open cells remain zero",
+    "All-natural, all-open, one-cell, borders, holes and narrow regions remain finite and bounded",
+    "Same input produces identical output without consuming native RNG"
+  ],
+  "tests": {"pure":"fpv.terrain.TerrainHeightFieldTest", "runtime":"Parent integration smoke covers original-map fingerprints, collision, Build Mode and multiple maps"},
+  "testResults": "pending execution"
+}

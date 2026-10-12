@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "component": "native-bridge-presentation",
+  "descriptor": "fpv.render.NativeBridgeLinks / FpvWorldRenderer",
+  "verification": "design-verified",
+  "runtimeVerified": false,
+  "parameters": [],
+  "parameterSource": "Bridge geometry constants are generated from design/render.sheet.json into RenderConfig.",
+  "sourceOfTruth": "ItemBridgeBuild.link with ItemBridge.linkValid, including LiquidBridge/BufferedItemBridge subclasses; DirectionBridgeBuild.findLink for duct/item/liquid directional families. Endpoints must remain canonical attached buildings of the native-valid type/team/range. Idle, disabled, unpowered and sleeping status never hides the connection.",
+  "representation": "Persistent raised deck or liquid channel with original atlas bridge and arrow regions, side rails, endpoint supports and explicit flow direction. Native liquid color appears only when stored liquid exists. The span clears intervening native physical surfaces; this is presentation geometry and does not change construction, inventories, transfer, collision or map tiles.",
+  "massDrivers": "Resolve native MassDriver and PayloadMassDriver same-type/team/range links for inspection; they are ballistic transport routes and are not drawn as fabricated solid bridges.",
+  "visibility": "Connection bounds are culled independently of endpoint bounds, so a visible span remains when both endpoints are outside the camera. Both endpoints respect native building fog; unexplored intermediate samples suppress the span. Canonical source anchors deduplicate links. Geometry streams through the existing bounded mesh; no per-link GPU resources.",
+  "verificationPlan": "Isolated native placements of six item/liquid/directional bridge pairs. Verify actual completed GPU span submission while idle, disabled and native-sleeping; invalid/disconnected endpoints remove the span; relink and rotated direction resolve native data. Capture an oblique bridges.png of the six spans before fixture cleanup. Fixture cleanup removes only newly placed blocks. Actual original resource transfer remains native and is checked separately by the integration harness.",
+  "knownLimits": ["Custom bridge classes outside these native inheritance families require an explicit metadata adapter.", "Raised spans are visual only; original transfer has no physical travel/collision model."]
+}

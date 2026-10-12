@@ -1,0 +1,1666 @@
+{
+  "date": "2026-10-12",
+  "branch": "perf/camera-profiling",
+  "baseCommit": "556df2a",
+  "host": "160.7",
+  "gpu": "NVIDIA GeForce RTX 4050 Laptop GPU",
+  "acceptedJarSha256": "d4f136ab7803966970ab50ef0d0150d895514aebff26dd343bd674c729582bc0",
+  "conclusion": "The confirmed severe slowdown is frame delivery in windowed Composed: Copy with GPU GDI, shared by 2D and cheap/vertical/outside-map views. Rendering continued near240 FPS while only2-7 FPS reached display in several five-second intervals. Native fullscreen switches this host to Hardware: Legacy Flip and removes that drop. The precise Windows/NVIDIA driver defect is not identified; this is a verified presentation-path workaround, not a camera math/terrain optimization.",
+  "fix": "Play-FPV initializes native fullscreen once with exact binary settings backup and all unrelated preferences verified unchanged. Native UI choices thereafter persist; explicit Windowed and Restore launchers remain available. Accepted gameplay JAR/fingerprint remains unchanged; no simulation or multiplayer protocol edit.",
+  "captures": {
+    "windowed": {
+      "captureDirectory": "local\\present-profile\\20261012-070411-ab1024",
+      "csvSha256": "5c85ee97cd29b020cd778812684a9af2f592f903093e9b0040839c0ef61fd581",
+      "frames": 16971,
+      "presentationModes": {
+        "Composed: Copy with GPU GDI": 16971
+      },
+      "windows": [
+        {
+          "startSeconds": 0,
+          "submittedFrames": 676,
+          "displayedFrames": 65,
+          "submittedFps": 133.8106043518336,
+          "displayedFps": 12.976765879299068,
+          "p95SubmittedFrameMs": 5.4103
+        },
+        {
+          "startSeconds": 5,
+          "submittedFrames": 1182,
+          "displayedFrames": 35,
+          "submittedFps": 240.1937107410543,
+          "displayedFps": 6.901223342398123,
+          "p95SubmittedFrameMs": 4.6635
+        },
+        {
+          "startSeconds": 10,
+          "submittedFrames": 797,
+          "displayedFrames": 224,
+          "submittedFps": 157.11516837541734,
+          "displayedFps": 45.09464026243953,
+          "p95SubmittedFrameMs": 10.1286
+        },
+        {
+          "startSeconds": 15,
+          "submittedFrames": 764,
+          "displayedFrames": 508,
+          "submittedFps": 152.6680032443949,
+          "displayedFps": 102.78547213140872,
+          "p95SubmittedFrameMs": 8.855
+        },
+        {
+          "startSeconds": 20,
+          "submittedFrames": 1201,
+          "displayedFrames": 31,
+          "submittedFps": 240.15824608733524,
+          "displayedFps": 6.251126841231601,
+          "p95SubmittedFrameMs": 4.7159
+        },
+        {
+          "startSeconds": 25,
+          "submittedFrames": 916,
+          "displayedFrames": 278,
+          "submittedFps": 183.40664426609462,
+          "displayedFps": 54.5476321696976,
+          "p95SubmittedFrameMs": 7.8745
+        },
+        {
+          "startSeconds": 30,
+          "submittedFrames": 1052,
+          "displayedFrames": 228,
+          "submittedFps": 210.19721433943818,
+          "displayedFps": 47.08468657923495,
+          "p95SubmittedFrameMs": 7.4227
+        },
+        {
+          "startSeconds": 35,
+          "submittedFrames": 966,
+          "displayedFrames": 236,
+          "submittedFps": 193.2210765550306,
+          "displayedFps": 46.84190301979427,
+          "p95SubmittedFrameMs": 7.2379
+        },
+        {
+          "startSeconds": 40,
+          "submittedFrames": 817,
+          "displayedFrames": 470,
+          "submittedFps": 163.3998921560712,
+          "displayedFps": 91.62052338711328,
+          "p95SubmittedFrameMs": 7.6964
+        },
+        {
+          "startSeconds": 45,
+          "submittedFrames": 1045,
+          "displayedFrames": 199,
+          "submittedFps": 208.9310402208647,
+          "displayedFps": 40.85008576875797,
+          "p95SubmittedFrameMs": 6.3106
+        },
+        {
+          "startSeconds": 50,
+          "submittedFrames": 964,
+          "displayedFrames": 174,
+          "submittedFps": 192.85741365204422,
+          "displayedFps": 33.89243977123538,
+          "p95SubmittedFrameMs": 8.6823
+        },
+        {
+          "startSeconds": 55,
+          "submittedFrames": 1202,
+          "displayedFrames": 36,
+          "submittedFps": 240.2724969967437,
+          "displayedFps": 7.21685264997116,
+          "p95SubmittedFrameMs": 4.8011
+        },
+        {
+          "startSeconds": 60,
+          "submittedFrames": 1067,
+          "displayedFrames": 10,
+          "submittedFps": 213.60982893496282,
+          "displayedFps": 2.0651143780119177,
+          "p95SubmittedFrameMs": 7.2364
+        },
+        {
+          "startSeconds": 65,
+          "submittedFrames": 609,
+          "displayedFrames": 536,
+          "submittedFps": 121.67715474456989,
+          "displayedFps": 103.81098854420563,
+          "p95SubmittedFrameMs": 9.7882
+        },
+        {
+          "startSeconds": 70,
+          "submittedFrames": 966,
+          "displayedFrames": 184,
+          "submittedFps": 193.18976094267003,
+          "displayedFps": 36.82574708933498,
+          "p95SubmittedFrameMs": 9.7483
+        },
+        {
+          "startSeconds": 75,
+          "submittedFrames": 574,
+          "displayedFrames": 468,
+          "submittedFps": 114.82712216625566,
+          "displayedFps": 93.58721972927377,
+          "p95SubmittedFrameMs": 12.994
+        },
+        {
+          "startSeconds": 80,
+          "submittedFrames": 1052,
+          "displayedFrames": 173,
+          "submittedFps": 210.4409770670545,
+          "displayedFps": 34.62365973164102,
+          "p95SubmittedFrameMs": 6.8503
+        },
+        {
+          "startSeconds": 85,
+          "submittedFrames": 1121,
+          "displayedFrames": 27,
+          "submittedFps": 240.12523012715243,
+          "displayedFps": 6.153049307665729,
+          "p95SubmittedFrameMs": 4.7391
+        }
+      ]
+    },
+    "explicitVsync": {
+      "captureDirectory": "local\\present-profile\\20261012-071233-8b3c28",
+      "csvSha256": "09a2452049f5d2359c15b3e089912538344cdbbd354d5a7514b4e8d4109e8c84",
+      "frames": 18095,
+      "presentationModes": {
+        "Composed: Copy with GPU GDI": 18095
+      },
+      "windows": [
+        {
+          "startSeconds": 0,
+          "submittedFrames": 329,
+          "displayedFrames": 73,
+          "submittedFps": 64.50292487434525,
+          "displayedFps": 14.389696315118107,
+          "p95SubmittedFrameMs": 58.8502
+        },
+        {
+          "startSeconds": 5,
+          "submittedFrames": 1201,
+          "displayedFrames": 36,
+          "submittedFps": 239.7907251902453,
+          "displayedFps": 7.317053985773087,
+          "p95SubmittedFrameMs": 4.5668
+        },
+        {
+          "startSeconds": 10,
+          "submittedFrames": 1200,
+          "displayedFrames": 15,
+          "submittedFps": 240.15885547654352,
+          "displayedFps": 3.1110872179612774,
+          "p95SubmittedFrameMs": 4.5469
+        },
+        {
+          "startSeconds": 15,
+          "submittedFrames": 1200,
+          "displayedFrames": 11,
+          "submittedFps": 239.96570410156983,
+          "displayedFps": 2.2407836517476714,
+          "p95SubmittedFrameMs": 4.5239
+        },
+        {
+          "startSeconds": 20,
+          "submittedFrames": 1038,
+          "displayedFrames": 25,
+          "submittedFps": 207.51147560450713,
+          "displayedFps": 4.639740225027772,
+          "p95SubmittedFrameMs": 4.6265
+        },
+        {
+          "startSeconds": 25,
+          "submittedFrames": 804,
+          "displayedFrames": 314,
+          "submittedFps": 160.88127400200034,
+          "displayedFps": 62.84366755083437,
+          "p95SubmittedFrameMs": 10.4923
+        },
+        {
+          "startSeconds": 30,
+          "submittedFrames": 717,
+          "displayedFrames": 618,
+          "submittedFps": 143.30363690240134,
+          "displayedFps": 123.48023651860062,
+          "p95SubmittedFrameMs": 8.7055
+        },
+        {
+          "startSeconds": 35,
+          "submittedFrames": 1140,
+          "displayedFrames": 58,
+          "submittedFps": 228.03689636983265,
+          "displayedFps": 12.134345870574355,
+          "p95SubmittedFrameMs": 6.5703
+        },
+        {
+          "startSeconds": 40,
+          "submittedFrames": 999,
+          "displayedFrames": 144,
+          "submittedFps": 199.8580867543343,
+          "displayedFps": 27.84473028134335,
+          "p95SubmittedFrameMs": 7.3162
+        },
+        {
+          "startSeconds": 45,
+          "submittedFrames": 1016,
+          "displayedFrames": 186,
+          "submittedFps": 203.12874243715305,
+          "displayedFps": 36.82636121219551,
+          "p95SubmittedFrameMs": 7.1602
+        },
+        {
+          "startSeconds": 50,
+          "submittedFrames": 998,
+          "displayedFrames": 287,
+          "submittedFps": 199.7277658518154,
+          "displayedFps": 58.46374074724727,
+          "p95SubmittedFrameMs": 7.283
+        },
+        {
+          "startSeconds": 55,
+          "submittedFrames": 1041,
+          "displayedFrames": 69,
+          "submittedFps": 208.05710637933868,
+          "displayedFps": 13.56085593292557,
+          "p95SubmittedFrameMs": 8.5393
+        },
+        {
+          "startSeconds": 60,
+          "submittedFrames": 876,
+          "displayedFrames": 282,
+          "submittedFps": 175.25373980677435,
+          "displayedFps": 56.439358551079174,
+          "p95SubmittedFrameMs": 9.3824
+        },
+        {
+          "startSeconds": 65,
+          "submittedFrames": 1101,
+          "displayedFrames": 127,
+          "submittedFps": 220.2607567271356,
+          "displayedFps": 26.363049035665615,
+          "p95SubmittedFrameMs": 8.5268
+        },
+        {
+          "startSeconds": 70,
+          "submittedFrames": 912,
+          "displayedFrames": 193,
+          "submittedFps": 182.41592855888177,
+          "displayedFps": 37.251660502417586,
+          "p95SubmittedFrameMs": 9.2607
+        },
+        {
+          "startSeconds": 75,
+          "submittedFrames": 1202,
+          "displayedFrames": 56,
+          "submittedFps": 240.32620543535901,
+          "displayedFps": 11.380996309081928,
+          "p95SubmittedFrameMs": 4.544
+        },
+        {
+          "startSeconds": 80,
+          "submittedFrames": 1181,
+          "displayedFrames": 40,
+          "submittedFps": 236.20097314800935,
+          "displayedFps": 7.959227108108749,
+          "p95SubmittedFrameMs": 4.6491
+        },
+        {
+          "startSeconds": 85,
+          "submittedFrames": 1140,
+          "displayedFrames": 31,
+          "submittedFps": 239.96014640852596,
+          "displayedFps": 6.745872494392548,
+          "p95SubmittedFrameMs": 4.8028
+        }
+      ]
+    },
+    "fullscreen": {
+      "captureDirectory": "local\\present-profile\\20261012-072513-4550db",
+      "csvSha256": "fd108db2a4d7ce05fa91772aa610622f4259120f5fa7dced710a09cbafbc9467",
+      "frames": 17250,
+      "presentationModes": {
+        "Composed: Copy with GPU GDI": 52,
+        "Hardware: Legacy Flip": 17198
+      },
+      "windows": [
+        {
+          "startSeconds": 0,
+          "submittedFrames": 180,
+          "displayedFrames": 178,
+          "submittedFps": 34.94855320561915,
+          "displayedFps": 34.55863833062828,
+          "p95SubmittedFrameMs": 68.8176
+        },
+        {
+          "startSeconds": 5,
+          "submittedFrames": 1199,
+          "displayedFrames": 1199,
+          "submittedFps": 239.95189434816027,
+          "displayedFps": 239.96577795804453,
+          "p95SubmittedFrameMs": 4.855
+        },
+        {
+          "startSeconds": 10,
+          "submittedFrames": 1198,
+          "displayedFrames": 1198,
+          "submittedFps": 239.57331632402781,
+          "displayedFps": 239.56865004645493,
+          "p95SubmittedFrameMs": 4.8698
+        },
+        {
+          "startSeconds": 15,
+          "submittedFrames": 1061,
+          "displayedFrames": 1061,
+          "submittedFps": 212.1952722893334,
+          "displayedFps": 212.1712762526209,
+          "p95SubmittedFrameMs": 4.6831
+        },
+        {
+          "startSeconds": 20,
+          "submittedFrames": 712,
+          "displayedFrames": 712,
+          "submittedFps": 142.3623793176415,
+          "displayedFps": 142.37875708944225,
+          "p95SubmittedFrameMs": 10.6335
+        },
+        {
+          "startSeconds": 25,
+          "submittedFrames": 1141,
+          "displayedFrames": 1141,
+          "submittedFps": 228.19351474031106,
+          "displayedFps": 228.54952536012374,
+          "p95SubmittedFrameMs": 5.3375
+        },
+        {
+          "startSeconds": 30,
+          "submittedFrames": 1200,
+          "displayedFrames": 1200,
+          "submittedFps": 239.95367454359263,
+          "displayedFps": 239.5692927427354,
+          "p95SubmittedFrameMs": 4.6477
+        },
+        {
+          "startSeconds": 35,
+          "submittedFrames": 1145,
+          "displayedFrames": 1145,
+          "submittedFps": 229.15668817710798,
+          "displayedFps": 229.1604994305912,
+          "p95SubmittedFrameMs": 5.6833
+        },
+        {
+          "startSeconds": 40,
+          "submittedFrames": 794,
+          "displayedFrames": 794,
+          "submittedFps": 158.79650012513724,
+          "displayedFps": 159.04265455891363,
+          "p95SubmittedFrameMs": 10.0442
+        },
+        {
+          "startSeconds": 45,
+          "submittedFrames": 813,
+          "displayedFrames": 813,
+          "submittedFps": 162.55113712817928,
+          "displayedFps": 162.30717513305544,
+          "p95SubmittedFrameMs": 7.7153
+        },
+        {
+          "startSeconds": 50,
+          "submittedFrames": 1012,
+          "displayedFrames": 1012,
+          "submittedFps": 202.34455759122,
+          "displayedFps": 202.7091517272993,
+          "p95SubmittedFrameMs": 6.4126
+        },
+        {
+          "startSeconds": 55,
+          "submittedFrames": 918,
+          "displayedFrames": 918,
+          "submittedFps": 183.73635810080094,
+          "displayedFps": 183.72815773914937,
+          "p95SubmittedFrameMs": 7.3425
+        },
+        {
+          "startSeconds": 60,
+          "submittedFrames": 986,
+          "displayedFrames": 986,
+          "submittedFps": 197.03686923522278,
+          "displayedFps": 196.68084909795502,
+          "p95SubmittedFrameMs": 6.686
+        },
+        {
+          "startSeconds": 65,
+          "submittedFrames": 1021,
+          "displayedFrames": 1021,
+          "submittedFps": 204.25944766964977,
+          "displayedFps": 204.51227388123473,
+          "p95SubmittedFrameMs": 6.2185
+        },
+        {
+          "startSeconds": 70,
+          "submittedFrames": 917,
+          "displayedFrames": 917,
+          "submittedFps": 183.32807306381414,
+          "displayedFps": 183.3757907281081,
+          "p95SubmittedFrameMs": 6.8377
+        },
+        {
+          "startSeconds": 75,
+          "submittedFrames": 945,
+          "displayedFrames": 945,
+          "submittedFps": 189.17767567299208,
+          "displayedFps": 189.12950832211865,
+          "p95SubmittedFrameMs": 6.8818
+        },
+        {
+          "startSeconds": 80,
+          "submittedFrames": 979,
+          "displayedFrames": 979,
+          "submittedFps": 195.79201951728447,
+          "displayedFps": 195.93853246122075,
+          "p95SubmittedFrameMs": 7.5028
+        },
+        {
+          "startSeconds": 85,
+          "submittedFrames": 1029,
+          "displayedFrames": 1029,
+          "submittedFps": 216.85658020418492,
+          "displayedFps": 216.4113268889307,
+          "p95SubmittedFrameMs": 6.0654
+        }
+      ]
+    }
+  },
+  "methodLimits": [
+    "First live capture overlapped the Java test suite and is excluded from clean before/after presentation comparisons.",
+    "Explicit saved VSync=true did not resolve symptoms or change presentation path. The original vsync key was absent and native UI default is true; do not infer that initial swap interval was0 from the earlier diagnostic fallback.",
+    "Fullscreen can change viewport dimensions. This comparison validates frame delivery, not a renderer geometry/FPS speedup at fixed resolution.",
+    "Five-second windows are elapsed from first ETW present; they are not individually tagged with exact player pitch. The player repeated2D/horizon/vertical/return and confirmed all views worked after fullscreen.",
+    "First five seconds include startup/load and are excluded from steady results.",
+    "OpenGL GPU metrics become unavailable in the Legacy Flip trace; no GPU-time reduction claim.",
+    "Part timers are nested; do not sum them. Count-only reflective GL runs are excluded from timing/allocations claims.",
+    "Scripted fixtures pin the pilot and disable waves/fog in copied data; physical foreground ETW sessions preserve ordinary gameplay.",
+    "No new two-client multiplayer run; accepted byte-identical JAR remains installed."
+  ],
+  "automatedBaseline": {
+    "run": "local/camera-profile/javaw-normal-before-a",
+    "resolution": "1280x800",
+    "phases": [
+      {
+        "mode": "2d",
+        "moduleFrameMeanMs": 1.7404566666666668,
+        "moduleFrameP95Ms": 2.5893,
+        "interFrameMeanMs": 5.248438075313808,
+        "fps": 190.53287580995405,
+        "threadCpuMs": 1.3671875,
+        "allocatedBytesPerFrame": 9049.2,
+        "nativeSimulationMs": 0.3966704166666667,
+        "nativeRenderCounterMs": 0.70832125,
+        "uiCounterMs": 0.3678033333333333,
+        "visible3DChunks": 0,
+        "gpuMs": 0.18503123012552303,
+        "gpuSamples": 239,
+        "gpuStatus": "asynchronous GL_TIME_ELAPSED; available results only, unsigned 32-bit durations below4.29s",
+        "drawCallsPerFrame": -1,
+        "trianglesPerFrame": -1,
+        "completedUtc": "2026-10-12T03:12:56.627662100Z",
+        "parts": {
+          "CONTROLS": {
+            "msPerFrame": 0.13224166666666665,
+            "callsPerFrame": 1
+          },
+          "CAMERA": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "PICK": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "SIM_ADAPTERS": {
+            "msPerFrame": 0.13563166666666665,
+            "callsPerFrame": 1
+          },
+          "WORLD_RENDER": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "ENVIRONMENT": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "TERRAIN": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "BUILDINGS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "LAYERS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "UNITS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "VFX": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "PROJECTIONS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "FIELDS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "MARKERS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "VIEWMODEL": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "HUD": {
+            "msPerFrame": 0.09028291666666667,
+            "callsPerFrame": 1
+          },
+          "heightRayQueriesPerFrame": 0,
+          "heightRayCellsPerFrame": 0,
+          "pickCellsPerFrame": 0
+        }
+      },
+      {
+        "mode": "2d-paused",
+        "moduleFrameMeanMs": 1.4462566666666667,
+        "moduleFrameP95Ms": 2.5939,
+        "interFrameMeanMs": 4.866373221757322,
+        "fps": 205.4918425757087,
+        "threadCpuMs": 1.0416666666666665,
+        "allocatedBytesPerFrame": 1345,
+        "nativeSimulationMs": 0.15220166666666665,
+        "nativeRenderCounterMs": 0.7749475,
+        "uiCounterMs": 0.38471625,
+        "visible3DChunks": 0,
+        "gpuMs": 0.21270065271966526,
+        "gpuSamples": 239,
+        "gpuStatus": "asynchronous GL_TIME_ELAPSED; available results only, unsigned 32-bit durations below4.29s",
+        "drawCallsPerFrame": -1,
+        "trianglesPerFrame": -1,
+        "completedUtc": "2026-10-12T03:12:58.231239300Z",
+        "parts": {
+          "CONTROLS": {
+            "msPerFrame": 0.12202041666666667,
+            "callsPerFrame": 1
+          },
+          "CAMERA": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "PICK": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "SIM_ADAPTERS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "WORLD_RENDER": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "ENVIRONMENT": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "TERRAIN": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "BUILDINGS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "LAYERS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "UNITS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "VFX": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "PROJECTIONS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "FIELDS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "MARKERS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "VIEWMODEL": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "HUD": {
+            "msPerFrame": 0.09547166666666668,
+            "callsPerFrame": 1
+          },
+          "heightRayQueriesPerFrame": 0,
+          "heightRayCellsPerFrame": 0,
+          "pickCellsPerFrame": 0
+        }
+      },
+      {
+        "mode": "fpv0",
+        "moduleFrameMeanMs": 7.5229425,
+        "moduleFrameP95Ms": 10.003,
+        "interFrameMeanMs": 10.940830962343096,
+        "fps": 91.40073577974732,
+        "threadCpuMs": 7.161458333333333,
+        "allocatedBytesPerFrame": 530061.7666666667,
+        "nativeSimulationMs": 0.5717775,
+        "nativeRenderCounterMs": 6.42623125,
+        "uiCounterMs": 0.3616391666666667,
+        "visible3DChunks": 399,
+        "gpuMs": 5.384239129707113,
+        "gpuSamples": 239,
+        "gpuStatus": "asynchronous GL_TIME_ELAPSED; available results only, unsigned 32-bit durations below4.29s",
+        "drawCallsPerFrame": -1,
+        "trianglesPerFrame": -1,
+        "completedUtc": "2026-10-12T03:13:01.899043600Z",
+        "parts": {
+          "CONTROLS": {
+            "msPerFrame": 0.3259020833333333,
+            "callsPerFrame": 1
+          },
+          "CAMERA": {
+            "msPerFrame": 0.04092833333333334,
+            "callsPerFrame": 2
+          },
+          "PICK": {
+            "msPerFrame": 0.06479083333333334,
+            "callsPerFrame": 2
+          },
+          "SIM_ADAPTERS": {
+            "msPerFrame": 0.16523958333333336,
+            "callsPerFrame": 1
+          },
+          "WORLD_RENDER": {
+            "msPerFrame": 5.8345925,
+            "callsPerFrame": 1
+          },
+          "ENVIRONMENT": {
+            "msPerFrame": 0.02851875,
+            "callsPerFrame": 1
+          },
+          "TERRAIN": {
+            "msPerFrame": 5.226155,
+            "callsPerFrame": 1
+          },
+          "BUILDINGS": {
+            "msPerFrame": 0.011406666666666666,
+            "callsPerFrame": 1
+          },
+          "LAYERS": {
+            "msPerFrame": 0.03398125,
+            "callsPerFrame": 1
+          },
+          "UNITS": {
+            "msPerFrame": 0.05601291666666666,
+            "callsPerFrame": 1
+          },
+          "VFX": {
+            "msPerFrame": 0.03485083333333334,
+            "callsPerFrame": 1
+          },
+          "PROJECTIONS": {
+            "msPerFrame": 0.02848,
+            "callsPerFrame": 1
+          },
+          "FIELDS": {
+            "msPerFrame": 0.0262475,
+            "callsPerFrame": 1
+          },
+          "MARKERS": {
+            "msPerFrame": 0.006142916666666667,
+            "callsPerFrame": 1
+          },
+          "VIEWMODEL": {
+            "msPerFrame": 0.25851375,
+            "callsPerFrame": 1
+          },
+          "HUD": {
+            "msPerFrame": 0.14261458333333335,
+            "callsPerFrame": 2
+          },
+          "heightRayQueriesPerFrame": 4,
+          "heightRayCellsPerFrame": 8,
+          "pickCellsPerFrame": 636
+        }
+      },
+      {
+        "mode": "fpv+45",
+        "moduleFrameMeanMs": 2.0919291666666666,
+        "moduleFrameP95Ms": 3.6257,
+        "interFrameMeanMs": 5.600157740585774,
+        "fps": 178.56639871994042,
+        "threadCpuMs": 1.6276041666666667,
+        "allocatedBytesPerFrame": 15118.366666666667,
+        "nativeSimulationMs": 0.5172391666666667,
+        "nativeRenderCounterMs": 1.0430658333333334,
+        "uiCounterMs": 0.3635233333333333,
+        "visible3DChunks": 2,
+        "gpuMs": 0.30952220920502094,
+        "gpuSamples": 239,
+        "gpuStatus": "asynchronous GL_TIME_ELAPSED; available results only, unsigned 32-bit durations below4.29s",
+        "drawCallsPerFrame": -1,
+        "trianglesPerFrame": -1,
+        "completedUtc": "2026-10-12T03:13:03.766559Z",
+        "parts": {
+          "CONTROLS": {
+            "msPerFrame": 0.30670458333333334,
+            "callsPerFrame": 1
+          },
+          "CAMERA": {
+            "msPerFrame": 0.036290833333333335,
+            "callsPerFrame": 2
+          },
+          "PICK": {
+            "msPerFrame": 0.07433041666666668,
+            "callsPerFrame": 2
+          },
+          "SIM_ADAPTERS": {
+            "msPerFrame": 0.13035416666666666,
+            "callsPerFrame": 1
+          },
+          "WORLD_RENDER": {
+            "msPerFrame": 0.4455566666666667,
+            "callsPerFrame": 1
+          },
+          "ENVIRONMENT": {
+            "msPerFrame": 0.02423208333333333,
+            "callsPerFrame": 1
+          },
+          "TERRAIN": {
+            "msPerFrame": 0.05442625,
+            "callsPerFrame": 1
+          },
+          "BUILDINGS": {
+            "msPerFrame": 0.005425,
+            "callsPerFrame": 1
+          },
+          "LAYERS": {
+            "msPerFrame": 0.01767625,
+            "callsPerFrame": 1
+          },
+          "UNITS": {
+            "msPerFrame": 0.017430416666666667,
+            "callsPerFrame": 1
+          },
+          "VFX": {
+            "msPerFrame": 0.02223333333333333,
+            "callsPerFrame": 1
+          },
+          "PROJECTIONS": {
+            "msPerFrame": 0.0179425,
+            "callsPerFrame": 1
+          },
+          "FIELDS": {
+            "msPerFrame": 0.03141416666666667,
+            "callsPerFrame": 1
+          },
+          "MARKERS": {
+            "msPerFrame": 0.0015766666666666668,
+            "callsPerFrame": 1
+          },
+          "VIEWMODEL": {
+            "msPerFrame": 0.16170708333333333,
+            "callsPerFrame": 1
+          },
+          "HUD": {
+            "msPerFrame": 0.15056291666666666,
+            "callsPerFrame": 2
+          },
+          "heightRayQueriesPerFrame": 4,
+          "heightRayCellsPerFrame": 8,
+          "pickCellsPerFrame": 634
+        }
+      },
+      {
+        "mode": "fpv-45",
+        "moduleFrameMeanMs": 1.8159416666666668,
+        "moduleFrameP95Ms": 3.1058,
+        "interFrameMeanMs": 5.25475439330544,
+        "fps": 190.30385155089277,
+        "threadCpuMs": 0.8463541666666666,
+        "allocatedBytesPerFrame": 12632.9,
+        "nativeSimulationMs": 0.38374125,
+        "nativeRenderCounterMs": 1.0184491666666666,
+        "uiCounterMs": 0.2638433333333333,
+        "visible3DChunks": 20,
+        "gpuMs": 0.30816401673640165,
+        "gpuSamples": 239,
+        "gpuStatus": "asynchronous GL_TIME_ELAPSED; available results only, unsigned 32-bit durations below4.29s",
+        "drawCallsPerFrame": -1,
+        "trianglesPerFrame": -1,
+        "completedUtc": "2026-10-12T03:13:05.509299200Z",
+        "parts": {
+          "CONTROLS": {
+            "msPerFrame": 0.23823833333333333,
+            "callsPerFrame": 1
+          },
+          "CAMERA": {
+            "msPerFrame": 0.025145833333333333,
+            "callsPerFrame": 2
+          },
+          "PICK": {
+            "msPerFrame": 0.018176666666666667,
+            "callsPerFrame": 2
+          },
+          "SIM_ADAPTERS": {
+            "msPerFrame": 0.07472166666666667,
+            "callsPerFrame": 1
+          },
+          "WORLD_RENDER": {
+            "msPerFrame": 0.46830916666666667,
+            "callsPerFrame": 1
+          },
+          "ENVIRONMENT": {
+            "msPerFrame": 0.02470416666666667,
+            "callsPerFrame": 1
+          },
+          "TERRAIN": {
+            "msPerFrame": 0.11600958333333333,
+            "callsPerFrame": 1
+          },
+          "BUILDINGS": {
+            "msPerFrame": 0.020639583333333333,
+            "callsPerFrame": 1
+          },
+          "LAYERS": {
+            "msPerFrame": 0.013307916666666666,
+            "callsPerFrame": 1
+          },
+          "UNITS": {
+            "msPerFrame": 0.015955,
+            "callsPerFrame": 1
+          },
+          "VFX": {
+            "msPerFrame": 0.04416083333333334,
+            "callsPerFrame": 1
+          },
+          "PROJECTIONS": {
+            "msPerFrame": 0.014427083333333333,
+            "callsPerFrame": 1
+          },
+          "FIELDS": {
+            "msPerFrame": 0.01651708333333333,
+            "callsPerFrame": 1
+          },
+          "MARKERS": {
+            "msPerFrame": 0.00153,
+            "callsPerFrame": 1
+          },
+          "VIEWMODEL": {
+            "msPerFrame": 0.11912083333333333,
+            "callsPerFrame": 1
+          },
+          "HUD": {
+            "msPerFrame": 0.13213416666666666,
+            "callsPerFrame": 2
+          },
+          "heightRayQueriesPerFrame": 4,
+          "heightRayCellsPerFrame": 8,
+          "pickCellsPerFrame": 34
+        }
+      },
+      {
+        "mode": "fpv+80",
+        "moduleFrameMeanMs": 1.6074804166666667,
+        "moduleFrameP95Ms": 2.4087,
+        "interFrameMeanMs": 5.08437489539749,
+        "fps": 196.68101203654876,
+        "threadCpuMs": 0.9114583333333334,
+        "allocatedBytesPerFrame": 14420.566666666668,
+        "nativeSimulationMs": 0.42420625,
+        "nativeRenderCounterMs": 0.8123220833333333,
+        "uiCounterMs": 0.23446791666666666,
+        "visible3DChunks": 1,
+        "gpuMs": 0.27912783263598323,
+        "gpuSamples": 239,
+        "gpuStatus": "asynchronous GL_TIME_ELAPSED; available results only, unsigned 32-bit durations below4.29s",
+        "drawCallsPerFrame": -1,
+        "trianglesPerFrame": -1,
+        "completedUtc": "2026-10-12T03:13:07.206979100Z",
+        "parts": {
+          "CONTROLS": {
+            "msPerFrame": 0.2510075,
+            "callsPerFrame": 1
+          },
+          "CAMERA": {
+            "msPerFrame": 0.024517916666666667,
+            "callsPerFrame": 2
+          },
+          "PICK": {
+            "msPerFrame": 0.06105583333333334,
+            "callsPerFrame": 2
+          },
+          "SIM_ADAPTERS": {
+            "msPerFrame": 0.10261708333333333,
+            "callsPerFrame": 1
+          },
+          "WORLD_RENDER": {
+            "msPerFrame": 0.29679916666666667,
+            "callsPerFrame": 1
+          },
+          "ENVIRONMENT": {
+            "msPerFrame": 0.021455833333333334,
+            "callsPerFrame": 1
+          },
+          "TERRAIN": {
+            "msPerFrame": 0.03660833333333333,
+            "callsPerFrame": 1
+          },
+          "BUILDINGS": {
+            "msPerFrame": 0.0039175,
+            "callsPerFrame": 1
+          },
+          "LAYERS": {
+            "msPerFrame": 0.011310833333333334,
+            "callsPerFrame": 1
+          },
+          "UNITS": {
+            "msPerFrame": 0.012722083333333334,
+            "callsPerFrame": 1
+          },
+          "VFX": {
+            "msPerFrame": 0.012433333333333334,
+            "callsPerFrame": 1
+          },
+          "PROJECTIONS": {
+            "msPerFrame": 0.013639166666666666,
+            "callsPerFrame": 1
+          },
+          "FIELDS": {
+            "msPerFrame": 0.014880416666666667,
+            "callsPerFrame": 1
+          },
+          "MARKERS": {
+            "msPerFrame": 0.0015054166666666668,
+            "callsPerFrame": 1
+          },
+          "VIEWMODEL": {
+            "msPerFrame": 0.09557,
+            "callsPerFrame": 1
+          },
+          "HUD": {
+            "msPerFrame": 0.13235666666666665,
+            "callsPerFrame": 2
+          },
+          "heightRayQueriesPerFrame": 4,
+          "heightRayCellsPerFrame": 8,
+          "pickCellsPerFrame": 636
+        }
+      },
+      {
+        "mode": "fpv-80",
+        "moduleFrameMeanMs": 1.4977170833333333,
+        "moduleFrameP95Ms": 2.0251,
+        "interFrameMeanMs": 4.997539330543933,
+        "fps": 200.09847524124635,
+        "threadCpuMs": 0.78125,
+        "allocatedBytesPerFrame": 9885.366666666667,
+        "nativeSimulationMs": 0.3599483333333333,
+        "nativeRenderCounterMs": 0.8011820833333334,
+        "uiCounterMs": 0.21659333333333333,
+        "visible3DChunks": 6,
+        "gpuMs": 0.29594885355648537,
+        "gpuSamples": 239,
+        "gpuStatus": "asynchronous GL_TIME_ELAPSED; available results only, unsigned 32-bit durations below4.29s",
+        "drawCallsPerFrame": -1,
+        "trianglesPerFrame": -1,
+        "completedUtc": "2026-10-12T03:13:08.862757700Z",
+        "parts": {
+          "CONTROLS": {
+            "msPerFrame": 0.22631166666666666,
+            "callsPerFrame": 1
+          },
+          "CAMERA": {
+            "msPerFrame": 0.023991666666666668,
+            "callsPerFrame": 2
+          },
+          "PICK": {
+            "msPerFrame": 0.0078075,
+            "callsPerFrame": 2
+          },
+          "SIM_ADAPTERS": {
+            "msPerFrame": 0.06604666666666667,
+            "callsPerFrame": 1
+          },
+          "WORLD_RENDER": {
+            "msPerFrame": 0.3287141666666667,
+            "callsPerFrame": 1
+          },
+          "ENVIRONMENT": {
+            "msPerFrame": 0.020485,
+            "callsPerFrame": 1
+          },
+          "TERRAIN": {
+            "msPerFrame": 0.052394583333333335,
+            "callsPerFrame": 1
+          },
+          "BUILDINGS": {
+            "msPerFrame": 0.0140025,
+            "callsPerFrame": 1
+          },
+          "LAYERS": {
+            "msPerFrame": 0.012171666666666666,
+            "callsPerFrame": 1
+          },
+          "UNITS": {
+            "msPerFrame": 0.013180416666666667,
+            "callsPerFrame": 1
+          },
+          "VFX": {
+            "msPerFrame": 0.03460916666666666,
+            "callsPerFrame": 1
+          },
+          "PROJECTIONS": {
+            "msPerFrame": 0.012684583333333334,
+            "callsPerFrame": 1
+          },
+          "FIELDS": {
+            "msPerFrame": 0.014609583333333334,
+            "callsPerFrame": 1
+          },
+          "MARKERS": {
+            "msPerFrame": 0.0013691666666666668,
+            "callsPerFrame": 1
+          },
+          "VIEWMODEL": {
+            "msPerFrame": 0.08157458333333333,
+            "callsPerFrame": 1
+          },
+          "HUD": {
+            "msPerFrame": 0.12872625,
+            "callsPerFrame": 2
+          },
+          "heightRayQueriesPerFrame": 4,
+          "heightRayCellsPerFrame": 8,
+          "pickCellsPerFrame": 8
+        }
+      },
+      {
+        "mode": "fpv+89",
+        "moduleFrameMeanMs": 1.5879608333333333,
+        "moduleFrameP95Ms": 2.2787,
+        "interFrameMeanMs": 5.13241589958159,
+        "fps": 194.84001678069836,
+        "threadCpuMs": 0.8463541666666666,
+        "allocatedBytesPerFrame": 8989.233333333334,
+        "nativeSimulationMs": 0.3871133333333333,
+        "nativeRenderCounterMs": 0.82634125,
+        "uiCounterMs": 0.24496291666666667,
+        "visible3DChunks": 1,
+        "gpuMs": 0.27519035983263596,
+        "gpuSamples": 239,
+        "gpuStatus": "asynchronous GL_TIME_ELAPSED; available results only, unsigned 32-bit durations below4.29s",
+        "drawCallsPerFrame": -1,
+        "trianglesPerFrame": -1,
+        "completedUtc": "2026-10-12T03:13:10.541925900Z",
+        "parts": {
+          "CONTROLS": {
+            "msPerFrame": 0.24360125,
+            "callsPerFrame": 1
+          },
+          "CAMERA": {
+            "msPerFrame": 0.02242041666666667,
+            "callsPerFrame": 2
+          },
+          "PICK": {
+            "msPerFrame": 0.013714583333333334,
+            "callsPerFrame": 2
+          },
+          "SIM_ADAPTERS": {
+            "msPerFrame": 0.06952166666666668,
+            "callsPerFrame": 1
+          },
+          "WORLD_RENDER": {
+            "msPerFrame": 0.30142458333333333,
+            "callsPerFrame": 1
+          },
+          "ENVIRONMENT": {
+            "msPerFrame": 0.02100166666666667,
+            "callsPerFrame": 1
+          },
+          "TERRAIN": {
+            "msPerFrame": 0.0348,
+            "callsPerFrame": 1
+          },
+          "BUILDINGS": {
+            "msPerFrame": 0.004496666666666667,
+            "callsPerFrame": 1
+          },
+          "LAYERS": {
+            "msPerFrame": 0.01209,
+            "callsPerFrame": 1
+          },
+          "UNITS": {
+            "msPerFrame": 0.01286625,
+            "callsPerFrame": 1
+          },
+          "VFX": {
+            "msPerFrame": 0.013869583333333334,
+            "callsPerFrame": 1
+          },
+          "PROJECTIONS": {
+            "msPerFrame": 0.01357625,
+            "callsPerFrame": 1
+          },
+          "FIELDS": {
+            "msPerFrame": 0.016102083333333333,
+            "callsPerFrame": 1
+          },
+          "MARKERS": {
+            "msPerFrame": 0.0015533333333333332,
+            "callsPerFrame": 1
+          },
+          "VIEWMODEL": {
+            "msPerFrame": 0.09287333333333332,
+            "callsPerFrame": 1
+          },
+          "HUD": {
+            "msPerFrame": 0.13664583333333336,
+            "callsPerFrame": 2
+          },
+          "heightRayQueriesPerFrame": 4,
+          "heightRayCellsPerFrame": 8,
+          "pickCellsPerFrame": 86
+        }
+      },
+      {
+        "mode": "fpv-89",
+        "moduleFrameMeanMs": 1.6844879166666666,
+        "moduleFrameP95Ms": 2.8991,
+        "interFrameMeanMs": 4.6035606694560665,
+        "fps": 217.22316089692262,
+        "threadCpuMs": 0.9114583333333334,
+        "allocatedBytesPerFrame": 10217.866666666667,
+        "nativeSimulationMs": 0.3774770833333333,
+        "nativeRenderCounterMs": 0.9349533333333334,
+        "uiCounterMs": 0.24128833333333335,
+        "visible3DChunks": 9,
+        "gpuMs": 0.2970756820083682,
+        "gpuSamples": 239,
+        "gpuStatus": "asynchronous GL_TIME_ELAPSED; available results only, unsigned 32-bit durations below4.29s",
+        "drawCallsPerFrame": -1,
+        "trianglesPerFrame": -1,
+        "completedUtc": "2026-10-12T03:13:12.087925600Z",
+        "parts": {
+          "CONTROLS": {
+            "msPerFrame": 0.24133833333333335,
+            "callsPerFrame": 1
+          },
+          "CAMERA": {
+            "msPerFrame": 0.02235583333333333,
+            "callsPerFrame": 2
+          },
+          "PICK": {
+            "msPerFrame": 0.007580833333333333,
+            "callsPerFrame": 2
+          },
+          "SIM_ADAPTERS": {
+            "msPerFrame": 0.06663875,
+            "callsPerFrame": 1
+          },
+          "WORLD_RENDER": {
+            "msPerFrame": 0.4036375,
+            "callsPerFrame": 1
+          },
+          "ENVIRONMENT": {
+            "msPerFrame": 0.021060416666666668,
+            "callsPerFrame": 1
+          },
+          "TERRAIN": {
+            "msPerFrame": 0.08030791666666667,
+            "callsPerFrame": 1
+          },
+          "BUILDINGS": {
+            "msPerFrame": 0.015396666666666666,
+            "callsPerFrame": 1
+          },
+          "LAYERS": {
+            "msPerFrame": 0.012157083333333334,
+            "callsPerFrame": 1
+          },
+          "UNITS": {
+            "msPerFrame": 0.014190833333333333,
+            "callsPerFrame": 1
+          },
+          "VFX": {
+            "msPerFrame": 0.042007916666666666,
+            "callsPerFrame": 1
+          },
+          "PROJECTIONS": {
+            "msPerFrame": 0.015198333333333335,
+            "callsPerFrame": 1
+          },
+          "FIELDS": {
+            "msPerFrame": 0.01700625,
+            "callsPerFrame": 1
+          },
+          "MARKERS": {
+            "msPerFrame": 0.00149,
+            "callsPerFrame": 1
+          },
+          "VIEWMODEL": {
+            "msPerFrame": 0.09726291666666667,
+            "callsPerFrame": 1
+          },
+          "HUD": {
+            "msPerFrame": 0.13779583333333334,
+            "callsPerFrame": 2
+          },
+          "heightRayQueriesPerFrame": 4,
+          "heightRayCellsPerFrame": 8,
+          "pickCellsPerFrame": 2
+        }
+      },
+      {
+        "mode": "fpv0-paused",
+        "moduleFrameMeanMs": 6.536004583333334,
+        "moduleFrameP95Ms": 9.0114,
+        "interFrameMeanMs": 9.502149790794979,
+        "fps": 105.23934288730435,
+        "threadCpuMs": 5.794270833333333,
+        "allocatedBytesPerFrame": 521582.2,
+        "nativeSimulationMs": 0.26356708333333334,
+        "nativeRenderCounterMs": 5.951868333333333,
+        "uiCounterMs": 0.2484525,
+        "visible3DChunks": 399,
+        "gpuMs": 4.890585439330544,
+        "gpuSamples": 239,
+        "gpuStatus": "asynchronous GL_TIME_ELAPSED; available results only, unsigned 32-bit durations below4.29s",
+        "drawCallsPerFrame": -1,
+        "trianglesPerFrame": -1,
+        "completedUtc": "2026-10-12T03:13:15.155264600Z",
+        "parts": {
+          "CONTROLS": {
+            "msPerFrame": 0.24602666666666664,
+            "callsPerFrame": 1
+          },
+          "CAMERA": {
+            "msPerFrame": 0.01608625,
+            "callsPerFrame": 1
+          },
+          "PICK": {
+            "msPerFrame": 0.02716875,
+            "callsPerFrame": 1
+          },
+          "SIM_ADAPTERS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "WORLD_RENDER": {
+            "msPerFrame": 5.471000833333333,
+            "callsPerFrame": 1
+          },
+          "ENVIRONMENT": {
+            "msPerFrame": 0.01936625,
+            "callsPerFrame": 1
+          },
+          "TERRAIN": {
+            "msPerFrame": 5.1002,
+            "callsPerFrame": 1
+          },
+          "BUILDINGS": {
+            "msPerFrame": 0.0053258333333333335,
+            "callsPerFrame": 1
+          },
+          "LAYERS": {
+            "msPerFrame": 0.013435833333333334,
+            "callsPerFrame": 1
+          },
+          "UNITS": {
+            "msPerFrame": 0.026936666666666668,
+            "callsPerFrame": 1
+          },
+          "VFX": {
+            "msPerFrame": 0.019265833333333333,
+            "callsPerFrame": 1
+          },
+          "PROJECTIONS": {
+            "msPerFrame": 0.018610416666666667,
+            "callsPerFrame": 1
+          },
+          "FIELDS": {
+            "msPerFrame": 0.01766208333333333,
+            "callsPerFrame": 1
+          },
+          "MARKERS": {
+            "msPerFrame": 0.0018754166666666667,
+            "callsPerFrame": 1
+          },
+          "VIEWMODEL": {
+            "msPerFrame": 0.17079541666666664,
+            "callsPerFrame": 1
+          },
+          "HUD": {
+            "msPerFrame": 0.12693416666666668,
+            "callsPerFrame": 2
+          },
+          "heightRayQueriesPerFrame": 2,
+          "heightRayCellsPerFrame": 4,
+          "pickCellsPerFrame": 318
+        }
+      },
+      {
+        "mode": "fpv+89-paused",
+        "moduleFrameMeanMs": 1.2809175000000002,
+        "moduleFrameP95Ms": 1.8188,
+        "interFrameMeanMs": 4.227215062761506,
+        "fps": 236.56236674808108,
+        "threadCpuMs": 0.7161458333333334,
+        "allocatedBytesPerFrame": 4220.466666666666,
+        "nativeSimulationMs": 0.23710291666666666,
+        "nativeRenderCounterMs": 0.754835,
+        "uiCounterMs": 0.21425166666666665,
+        "visible3DChunks": 1,
+        "gpuMs": 0.2840550292887029,
+        "gpuSamples": 239,
+        "gpuStatus": "asynchronous GL_TIME_ELAPSED; available results only, unsigned 32-bit durations below4.29s",
+        "drawCallsPerFrame": -1,
+        "trianglesPerFrame": -1,
+        "completedUtc": "2026-10-12T03:13:16.550813800Z",
+        "parts": {
+          "CONTROLS": {
+            "msPerFrame": 0.2188375,
+            "callsPerFrame": 1
+          },
+          "CAMERA": {
+            "msPerFrame": 0.01655458333333333,
+            "callsPerFrame": 1
+          },
+          "PICK": {
+            "msPerFrame": 0.007938333333333334,
+            "callsPerFrame": 1
+          },
+          "SIM_ADAPTERS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "WORLD_RENDER": {
+            "msPerFrame": 0.2771095833333333,
+            "callsPerFrame": 1
+          },
+          "ENVIRONMENT": {
+            "msPerFrame": 0.017204583333333332,
+            "callsPerFrame": 1
+          },
+          "TERRAIN": {
+            "msPerFrame": 0.03393875,
+            "callsPerFrame": 1
+          },
+          "BUILDINGS": {
+            "msPerFrame": 0.00444,
+            "callsPerFrame": 1
+          },
+          "LAYERS": {
+            "msPerFrame": 0.009769583333333333,
+            "callsPerFrame": 1
+          },
+          "UNITS": {
+            "msPerFrame": 0.01317125,
+            "callsPerFrame": 1
+          },
+          "VFX": {
+            "msPerFrame": 0.015020833333333334,
+            "callsPerFrame": 1
+          },
+          "PROJECTIONS": {
+            "msPerFrame": 0.012703333333333334,
+            "callsPerFrame": 1
+          },
+          "FIELDS": {
+            "msPerFrame": 0.016240416666666667,
+            "callsPerFrame": 1
+          },
+          "MARKERS": {
+            "msPerFrame": 0.0013325,
+            "callsPerFrame": 1
+          },
+          "VIEWMODEL": {
+            "msPerFrame": 0.08076833333333333,
+            "callsPerFrame": 1
+          },
+          "HUD": {
+            "msPerFrame": 0.1232475,
+            "callsPerFrame": 2
+          },
+          "heightRayQueriesPerFrame": 2,
+          "heightRayCellsPerFrame": 4,
+          "pickCellsPerFrame": 43
+        }
+      },
+      {
+        "mode": "2d-repeat",
+        "moduleFrameMeanMs": 1.00558625,
+        "moduleFrameP95Ms": 1.5345,
+        "interFrameMeanMs": 3.8853979079497907,
+        "fps": 257.3738967517153,
+        "threadCpuMs": 0.4557291666666667,
+        "allocatedBytesPerFrame": 8530.766666666666,
+        "nativeSimulationMs": 0.2131425,
+        "nativeRenderCounterMs": 0.46895,
+        "uiCounterMs": 0.20192458333333335,
+        "visible3DChunks": 0,
+        "gpuMs": 0.1768220920502092,
+        "gpuSamples": 239,
+        "gpuStatus": "asynchronous GL_TIME_ELAPSED; available results only, unsigned 32-bit durations below4.29s",
+        "drawCallsPerFrame": -1,
+        "trianglesPerFrame": -1,
+        "completedUtc": "2026-10-12T03:13:17.881001400Z",
+        "parts": {
+          "CONTROLS": {
+            "msPerFrame": 0.09933458333333332,
+            "callsPerFrame": 1
+          },
+          "CAMERA": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "PICK": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "SIM_ADAPTERS": {
+            "msPerFrame": 0.04973125,
+            "callsPerFrame": 1
+          },
+          "WORLD_RENDER": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "ENVIRONMENT": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "TERRAIN": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "BUILDINGS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "LAYERS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "UNITS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "VFX": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "PROJECTIONS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "FIELDS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "MARKERS": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "VIEWMODEL": {
+            "msPerFrame": 0,
+            "callsPerFrame": 0
+          },
+          "HUD": {
+            "msPerFrame": 0.08225541666666668,
+            "callsPerFrame": 1
+          },
+          "heightRayQueriesPerFrame": 0,
+          "heightRayCellsPerFrame": 0,
+          "pickCellsPerFrame": 0
+        }
+      }
+    ],
+    "scope": "Hidden copied-profile CPU/module/allocation/async GPU phase tests, not actual foreground display rate"
+  },
+  "countOnlyBaseline": {
+    "run": "local/camera-profile/draw-count-before-a",
+    "counts": [
+      {
+        "mode": "2d",
+        "draws": 34.775,
+        "triangles": 14726.65
+      },
+      {
+        "mode": "2d-paused",
+        "draws": 35,
+        "triangles": 14750
+      },
+      {
+        "mode": "fpv0",
+        "draws": 69.975,
+        "triangles": 92038.8
+      },
+      {
+        "mode": "fpv+45",
+        "draws": 43,
+        "triangles": 17798.2
+      },
+      {
+        "mode": "fpv-45",
+        "draws": 62.95,
+        "triangles": 28155.5
+      },
+      {
+        "mode": "fpv+80",
+        "draws": 41.44166666666667,
+        "triangles": 17196.7
+      },
+      {
+        "mode": "fpv-80",
+        "draws": 48.333333333333336,
+        "triangles": 20136.6
+      },
+      {
+        "mode": "fpv+89",
+        "draws": 41.94166666666667,
+        "triangles": 17199.65
+      },
+      {
+        "mode": "fpv-89",
+        "draws": 51.81666666666667,
+        "triangles": 22179.633333333335
+      },
+      {
+        "mode": "fpv0-paused",
+        "draws": 69,
+        "triangles": 92010
+      },
+      {
+        "mode": "fpv+89-paused",
+        "draws": 41,
+        "triangles": 17184
+      },
+      {
+        "mode": "2d-repeat",
+        "draws": 34,
+        "triangles": 14722
+      }
+    ]
+  },
+  "tests": {
+    "mainSourcesCompiledAgainstInstalledHost": true,
+    "finalMainSourceHashesMatchCompiledStage": true,
+    "javaPrograms": {
+      "total": 107,
+      "passed": 107
+    },
+    "preferenceToolChecks": 10,
+    "targetedSDL": {
+      "runStatus": "passed",
+      "host": "160.7",
+      "started": "2026-10-12T04:44:11.661659Z",
+      "layerSchematics": "PASS: 38 SDL copy/paste checks: Ctrl+F Z0/Z1/Z2/Z3, frozen drag layer, native rotate/flip and multiblocks, full GL ghost, supported/unsupported/occupied paste, 120 held polls, native Z0 queue execution, cancellation and FPV/Build transitions. Scripted bindings, no OS input automation.",
+      "placementLifecycle": "PASS: 48 placement lifecycle checks; stationary/repeated-tap/120 held polls, short/fast clicks, Z0/Z1/Z2 and wall-top, auto/locked drag cells, native DesktopInput plan flushing/execution and interrupted mode transitions. Scripted polling, no OS input automation.",
+      "automaticConstruction": "PASS: 37 actual SDL scripted construction checks; 13 wall/conveyor GPU pixel checks (four angles, stable frames, rotation, opaque occlusion, native ground-joint invalidation); native Z0 build/break execution, Z1/Z2 structural placement/edge expansion, tall Z1/Z3 wall stack and Z5 conveyor, rotation, occupied/unsupported/Free validation, exact stacked removal, cancellation/hold/Control/FPV and support consequences. Physical input not automated.",
+      "mouseInteraction": "PASS: 26 real SDL/native UI checks; Z0/Z2/same XY, automatic platform floor and manual lock, direct bridge/power links, native configuration, cancellation/flight restore and advanced fallback. Input via API; physical mouse not automated.",
+      "mouseVisuals": "PASS: 6 GPU pixel checks; 3D boundaries, green/red link preview, opaque depth occlusion and cancellation",
+      "unitCommands": "PASS: 40 actual native command checks; single/XYZ-area selection, owner/enemy/core rules, native movement/queue/attack RPCs and AI, physical platform occlusion, rectangle/selection GPU captures, Shift toggle/hold, F10/Tab/2D transitions, UI/cancel/held-button gates, no pilot firing or queued-build loss",
+      "groundEye": "Native SDL ground-camera measurements (tiles; original physical body unchanged)\ndagger: physicalZ=0.12, halfHeight=0.12, eyeZ=1.6499425, eyeLift=1.5299291658401488, target=1.5300000286102293\nfortress: physicalZ=0.12, halfHeight=0.12, eyeZ=1.5325073, eyeLift=1.4125089693069457, target=1.4125\nreign: physicalZ=0.2625, halfHeight=0.2625, eyeZ=2.944921, eyeLift=2.6824026584625242, target=2.6824999999999997\nReign roof: minZ=1.24, eyeZ=1.145 (radius=0.08)\nPASS: 37 production-camera checks; flat terrain, sizes, own hull, override, possession easing, actual upper ceiling, recovery, native aim/physics, flying/legged unchanged\n",
+      "cameraModes": "Native 160.7 production camera measurements (tiles)\ndagger: near=1.562048316001892, far=12.993806838989258\nreign: near=5.094348430633545, far=44.15813446044922\nflare: near=1.799999713897705, far=15.28524112701416\neclipse: near=11.734427452087402, far=101.71472930908203\natrax: near=2.2782633304595947, far=19.748119354248047\ntoxopid: near=5.102285861968994, far=44.22693634033203\nrisso: near=2.653515100479126, far=23.000823974609375\nPASS: 685 checks; 7 native unit families + stationary turret, XYZ aim invariance, zoom, GPU, upper wall, generated mountain, roof, Build, possession/death\n",
+      "firstPersonVisuals": "PASS: 83 actual-atlas GPU checks; Flare integrated nose, Dagger/Fortress/Reign/Toxopid extruded weapons, real side faces, native recoil, wall/enclosed depth independence, unchanged world depth/GL state, dead/removed/inactive owner gates, first-person legs without torso, cached models/targets, no combat mutations",
+      "miningVisuals": "PASS: 20 native MinerAI/controlled Alpha, copper/lead, world/FPV GPU pixels, actual XYZ source/ore surface/progress, immediate stop/target changes and read-only inventory",
+      "laserVolumes": "PASS: 10 actual GPU checks; closed axial/end-on/side/oblique tube, native-color identity, one reused streaming mesh, GL0",
+      "vfxCombat": "PASS: 18 native Nova heal/actual HP/green GPU flash/expiry; Lancer/Meltdown/Vela real hits/color/timing, world and controlled Lancer FPV, GL0",
+      "constructionVisuals": "PASS: 9 construction GPU checks; original conveyor rotation, valid/invalid tint, translucent wall sides, real depth occlusion, XYZ beam, cached bounded batches",
+      "displayVisuals": "PASS: 7 GPU checks; native display pixels, canvas texture, framebuffer/depth restore, cache reuse and cleanup",
+      "platforms": 1000,
+      "measuredFrames": 120,
+      "constructionCpuMeanMs": 0.07364166666666666,
+      "constructionCpuMaxMs": 0.236,
+      "constructionGpuMeanMs": 0.011952403361344538,
+      "gpuSamples": 238,
+      "visibleChunks": 9,
+      "profileScope": "Construction pass only, warm static meshes; full scene and input latency not included",
+      "checks": 209,
+      "completed": "2026-10-12T04:44:19.808547600Z"
+    },
+    "broadLegacySmoke": {
+      "status": "failed",
+      "run": "local/compat-smoke/camera-perf-final",
+      "assertion": "Flight firing smoke: real Flare fixed weapon shoots at heading=0, pitch=85, view=0",
+      "scope": "Unchanged accepted JAR; no combat edits or claim of full broad-smoke pass."
+    },
+    "originalFiles": {
+      "protectedFiles": 102,
+      "unchanged": 102,
+      "changed": [],
+      "installedJarSha256": "d4f136ab7803966970ab50ef0d0150d895514aebff26dd343bd674c729582bc0"
+    },
+    "finalBuildStage": "local/camera-profile-staging/final-performance",
+    "finalClassFilesMatchPreviouslyTestedStage": true
+  }
+}

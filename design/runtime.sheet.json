@@ -1,0 +1,187 @@
+{
+  "schemaVersion": 1,
+  "scope": "incremental spatial combat balance, wall projection and server-authoritative matching-mod multiplayer milestone0.7",
+  "verification": "design-verified",
+  "systems": [
+    {
+      "id": "host",
+      "descriptor": "HostPolicy",
+      "hook": "native Java mod init",
+      "policy": "Version guard160.5; native map/economy/save format; separate D: lab; matching-mod multiplayer uses CPU server authority and client pose rendering.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "clock",
+      "descriptor": "ClockPolicy",
+      "hook": "ApplicationCore.modules Logic wrapper and pinned SdlGraphics.deltaTime",
+      "policy": "Scale Time.delta and backend deltaTime only around original Logic.update; restore both in finally; 0% true pause with original pause context",
+      "verification": "design-verified"
+    },
+    {
+      "id": "mode",
+      "descriptor": "ModePolicy",
+      "hook": "Trigger.update input and UI lifecycle",
+      "policy": "F5 toggles FPV/2D; Tab toggles Build; menus/focus loss release capture; unsupported possessed units return2D; F7 toggles chase view, F9 toggles Acro/Stabilized; flight speed25..300% applies to all presets.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "camera",
+      "descriptor": "CameraPolicy",
+      "hook": "Camera3D",
+      "policy": "Height-aware far plane covers map and scenery at720tiles ceiling (16x45). Chase camera boom respects terrain/structures; stabilized free look independent of WASD map-axis movement; Build keeps prior downward camera.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "player",
+      "descriptor": "PlayerPolicy",
+      "hook": "original builder Unit",
+      "policy": "Original UnitMotionBridge retains normal running XY authority. Build navigation alone may move the controlled unit with native Unit.move during0% pause, without updating world ticks or other entities. Health/resources/build range remain native; supported proxy weapons use XYZ contact before native health APIs.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "collision",
+      "descriptor": "CollisionPolicy",
+      "hook": "World.tile and renderer heightFor",
+      "policy": "Every250Hz flight substep receives a swept collision check; canonicalXYZ body queries, mass/relative-speed trauma and separately deferred paired impulses. Reconcile native movement before native damage. Generic scaled XYZ bursts bounded40tiles/12000damage; native death consequences remain. No reactor code.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "hud",
+      "descriptor": "HudPolicy",
+      "hook": "native Scene table and settings category",
+      "policy": "Retain FPV/nativeBuild UI boundaries; expose Cinematic/Freestyle/Race/Insane/Custom, meaningful performance controls plus unit-dependent characteristics, original rates, camera/FOV, ram coefficient and scaled blast base settings.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "terrain-events",
+      "descriptor": "TerrainInvalidationPolicy",
+      "hook": "TileChangeEvent / TileFloorChangeEvent / TileOverlayChangeEvent",
+      "policy": "Invalidate affected 3D chunks for original block, floor and ore/overlay changes. Read native tiles after their original event; never write world state from the renderer.",
+      "verification": "source"
+    },
+    {
+      "id": "smoke",
+      "descriptor": "SmokePolicy",
+      "hook": "opt-in fpv.smoke system property",
+      "policy": "Opt-in isolated lab only; explicit copper/unlock/building-family fixtures, native builder consumption, actual conveyor handleStack and progress, strict native clock timing, three native maps across Serpulo/Erekir, API input/motion/HUD checks and framebuffer screenshots; sky phase previews and high overview altitude are lab fixtures; never captures cursor.",
+      "verification": "design-verified"
+    },
+    {
+      "id": "world3d",
+      "descriptor": "World3DAdapter",
+      "hook": "native world tiles / afterGameUpdate",
+      "policy": "CanonicalXYZ physical snapshot shared by render, ram, blast, ordinary adapted ammunition/lasers/lightning and altitude-gated native passive separation. Native strategic target acquisition and explicitly unsupported weapon lifecycles retainXY. Never mutate map/nativeUnitType for altitude.",
+      "verification": "design-verified"
+    }
+  ],
+  "parameters": [
+    {
+      "name": "FOV",
+      "value": 95.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "CAMERA_TILT",
+      "value": 15.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "START_HEIGHT",
+      "value": 5.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_HEIGHT",
+      "value": 0.22,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_HEIGHT",
+      "value": 720,
+      "verification": "request"
+    },
+    {
+      "name": "NEAR_CLIP",
+      "value": 0.06,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FAR_CLIP",
+      "value": 100.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MOUSE_RATE_SCALE",
+      "value": 0.0005,
+      "unit": "normalized angular rate per cursor pixel/second",
+      "verification": "design-verified"
+    },
+    {
+      "name": "THROTTLE_RATE",
+      "value": 0.35,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COLLISION_RADIUS",
+      "value": 0.22,
+      "verification": "design-verified"
+    },
+    {
+      "name": "COLLISION_STEP",
+      "value": 0.15,
+      "verification": "design-verified"
+    },
+    {
+      "name": "BUILD_CAMERA_TILT",
+      "value": -38.0,
+      "verification": "design-verified"
+    }
+  ],
+  "buildTimePercent": {
+    "values": [
+      0,
+      5,
+      10,
+      25,
+      50,
+      100
+    ],
+    "defaultIndex": 2,
+    "verification": "design-verified"
+  },
+  "controls": {
+    "toggle": "f5",
+    "build": "tab",
+    "recover": "f6",
+    "throttleUp": "w",
+    "throttleDown": "s",
+    "yawLeft": "a",
+    "yawRight": "d",
+    "pitchRoll": "mouse; arrows fallback",
+    "verification": "design-verified",
+    "view": "f7",
+    "flightMode": "f9",
+    "stabilized": "WASD relative to horizontal pilot heading; E/Q or PageUp/PageDown altitude; mouse independent look",
+    "creatorFlight": "F8 per-unit request; host permission defaults OFF; Q/E altitude in creator mode, walker stance while grounded"
+  },
+  "limitations": [
+    "First prototype retains original 2D pass before3D composite",
+    "Detailed art/custom block draw code incomplete",
+    "Physical controller support not implemented in this milestone",
+    "Melty release blocked by unsupported host catalog",
+    "JNA requires complete Java17 or newer; bundled Steam JRE lacks java.logging; launcher uses D: portable runtime",
+    "Multiplayer requires identical mod/protocol on every peer; native non-player-controllable missiles, body segments and non-ControlBlock defensive turrets retain their automatic behavior.",
+    "Wave/campaign timing equivalence across long sessions and asynchronous unit collision solver not exhaustively tested"
+  ],
+  "runtimeVerified": false,
+  "testResults": {
+    "scriptedRuntime": "Versioned execution evidence is stored separately from build-time design metadata",
+    "evidence": "local/smoke/verification.json and local/smoke/results.json",
+    "scope": "Native construction, input API, unit API, all six clock/conveyor/sky rates and restoration, three maps, HUD, day/night and bounded chunk buffers; not complete production gameplay acceptance",
+    "physicalInput": "pending user playtest"
+  },
+  "pauseDialogPolicy": {
+    "verification": "design-verified",
+    "behavior": "Retain Build-owned zero-percent pause until all dialogs close and restoration executes, including when FPV has been disabled; never clear ownership merely because restoration is deferred."
+  }
+}

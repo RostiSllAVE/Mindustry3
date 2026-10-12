@@ -1,0 +1,62 @@
+{
+  "schemaVersion": 1,
+  "verification": "design-verified",
+  "descriptor": "BuildNavigator / StabilizedFlight / FlightView / BuildControls / ViewSettings",
+  "parameters": [
+    {
+      "name": "DEFAULT_SPEED_MPS",
+      "value": 12,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_SPEED_MPS",
+      "value": 60,
+      "verification": "design-verified"
+    },
+    {
+      "name": "TURN_DEGREES_PER_SECOND",
+      "value": 65,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_FLIGHT_SPEED_PERCENT",
+      "value": 25,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_FLIGHT_SPEED_PERCENT",
+      "value": 300,
+      "verification": "design-verified"
+    },
+    {
+      "name": "STABILIZED_RESPONSE_SECONDS",
+      "value": 0.24,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FREELOOK_DEGREES_PER_PIXEL",
+      "value": 0.16,
+      "verification": "design-verified"
+    }
+  ],
+  "policy": {
+    "controls": "Build uses WASD planar movement, PageUp/PageDown altitude, Home/End yaw; mouse stays native builder cursor. Release holds level position. Separate0..60m/s precision speed is real-time and independent of simulation percentage.",
+    "collision": "Generated terrain, structures and unit bodies remain obstacles. Precision navigation clamps movement without crash trauma or impulses. Normal running movement commits through UnitMotionBridge; at Build0 only the controlled unit moves through native Unit.move, without Unit.update or any simulation tick.",
+    "camera": "FPV POV angle0..180:0 down,90 forward,180 up. Migrate original signed fpv-tilt once by adding90. Existing independent downward Build tilt is preserved. FOV slider0..180 projects at1..179 to keep perspective matrices finite.",
+    "ui": "Build panel labels precision Build speed separately from flight speed. Collapsible flight/camera settings expose mode, view and flight speed; focused text/dialogs suspend inputs. HUD shows mode/view/speed multiplier.",
+    "compatibility": "Native map/economy/build queues preserved; physical combat and multiplayer authority deliberately replaced by spatial modules. Build pause is local single-player only; multiplayer uses live shared simulation.",
+    "flightSpeed": "Separate25..300% flight speed applies to every performance preset by recalibrating drag equilibrium, preserving mass/thrust/inertia/pose and practical400m/s safety bound. Build precision speed remains separate.",
+    "stabilized": "F9 Acro/Stabilized. Stabilized WASD uses pilot horizontal heading: W forward, D strafe right; E/Q or PgUp/PgDn altitude. Camera pitch never supplies vertical movement. Level body faces pilot heading even while stopped/strafe/reverse, keeping fixed native weapon cones aligned. Bounded acceleration/braking and per-substep contacts remain.",
+    "view": "F7 cycles first/chase/rear. Rear puts camera ahead of aircraft looking backwards, observation only: weapon direction remains pilot forward. One-time migration of fpv-third-person boolean to fpv-camera-view integer. Build keeps first-person builder and restores flight view.",
+    "firing": "Flight trigger applied after native builder input; held LMB is not blocked by retained build selection, configurable tiles beneath craft, stale building flag, or hidden pointer hover. Modal/text/focus, Build Mode, death and native unit status/reload/ammo remain enforced. Native XY weapon aim follows the same physical ray as XYZ projectile aim."
+  },
+  "tests": [
+    "Pure diagonal/heading/hold/speed and camera boundary checks",
+    "Native paused movement without tick, wave or grid changes; nonzero scaled motion bridge",
+    "Native camera endpoints finite, original construction/time presets and saves still work",
+    "Actual resolved speed changes in every preset and sustained integration",
+    "Heading-relative stabilized basis at cardinal and arbitrary headings, camera pitch independence, brake/diagonal limits, per-substep collision",
+    "Chase camera/own-unit rendering and720tile altitude with finite frustum and map picking",
+    "First/chase/rear camera cycle, rear does not reverse guns, live native fixed mounts can fire while moving sideways/backward and over configurable tiles"
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "schemaVersion": 1,
+  "descriptor": "fpv.render.EnvironmentRenderer",
+  "verification": "design-verified",
+  "runtimeVerified": false,
+  "policy": {
+    "clock": "Automatic mode reads original Universe/Sector solar orientation in a campaign, including tidal lock. Maps without a sector use state.tick with a decorative simulated-time cycle. An explicit visual-cycle setting allows the same cosmetic cycle on any map. Neither mode writes simulation clocks, ambientLight, solar power or other game rules.",
+    "sky": "Original procedural ray-based atmosphere, sun, stars and stylized companion planet; ray basis follows full quaternion camera including roll. Companion identity and palette use native Serpulo/Erekir data. Its enlarged angular size and always-above-horizon placement are artistic, not an astronomical orbit simulation.",
+    "background": "A cached deterministic skirt and mountain rings outside the exact rectangular map boundary. Decorative only: never add tiles, collision, build targets, resources or enemies. Current map dimensions determine their extent; palette follows the planet.",
+    "visibility": "No distance fog conceals playable terrain. Native discovery and entity visibility remain renderer responsibilities. Sky and background render into the renderer's existing depth framebuffer, before world geometry.",
+    "testing": "A preview phase override is accepted only when fpv.smoke is explicitly true; it does not alter native time. Runtime checks compare game-clock changes and confirm freeze at0 percent plus day/night screenshots.",
+    "farPlane": "farPlane(Camera3D) preserves map-diagonal baseline and extends to camera-to-map-center distance plus a sphere enclosing all decorative mountain rings, with margin. Camera altitude and chase displacement are included, so small maps remain visible from720 tiles above. Ray-based sky remains independent of depth distance."
+  },
+  "parameters": [
+    {
+      "name": "CYCLE_SECONDS",
+      "value": 1440.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "START_PHASE",
+      "value": 0.4,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MIN_AMBIENT",
+      "value": 0.34,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MAX_AMBIENT",
+      "value": 1.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "DAY_START_SUN_Y",
+      "value": -0.16,
+      "verification": "design-verified"
+    },
+    {
+      "name": "DAY_FULL_SUN_Y",
+      "value": 0.3,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FAR_DIAGONAL_MULTIPLIER",
+      "value": 3.2,
+      "verification": "design-verified"
+    },
+    {
+      "name": "FAR_MARGIN",
+      "value": 128.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MOUNTAIN_SEGMENTS",
+      "value": 192,
+      "verification": "design-verified"
+    },
+    {
+      "name": "MOUNTAIN_HEIGHT_DIAGONAL",
+      "value": 0.085,
+      "verification": "design-verified"
+    },
+    {
+      "name": "PLANET_ANGULAR_RADIUS",
+      "value": 0.11,
+      "verification": "design-verified"
+    },
+    {
+      "name": "PLANET_AZIMUTH_DEGREES",
+      "value": 26.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "PLANET_ELEVATION_DEGREES",
+      "value": 26.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "STAR_GRID",
+      "value": 190.0,
+      "verification": "design-verified"
+    },
+    {
+      "name": "STAR_THRESHOLD",
+      "value": 0.991,
+      "verification": "design-verified"
+    },
+    {
+      "verification": "design-verified",
+      "value": 1.3,
+      "name": "BACKGROUND_BOUND_DIAGONAL"
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "full-map",
+      "criterion": "Camera far plane covers the map diagonal and background; atmospheric distance fade is absent from world geometry.",
+      "runtimeVerified": false
+    },
+    {
+      "id": "clock",
+      "criterion": "Read-only time follows the native campaign or map clock and holds during Build0 pause; explicit preview leaves game state untouched.",
+      "runtimeVerified": false
+    },
+    {
+      "id": "visuals",
+      "criterion": "Actual framebuffer captures show native textured map, continuous distant mountain backdrop, day/night sky, stars and other planet; no GL errors.",
+      "runtimeVerified": false
+    }
+  ]
+}
