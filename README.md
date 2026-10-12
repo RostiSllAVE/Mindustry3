@@ -1,11 +1,14 @@
-# Mindustry³ / Mindustry FPV — First Public Alpha
+# Mindustry³ / Mindustry FPV — Alpha 1.0.1 Hotfix
 
 An **experimental, unofficial fan-made mod** that presents Mindustry in 3D,
 adds FPV flight and spatial combat, and extends construction across elevated
 floors. This is not an official Mindustry release or a standalone game.
 
-**Prepared release: Alpha 1.0.0.** The tested mod's internal version remains
-**0.18.27**. Nothing has been published yet. Liftoff inspired the FPV concept;
+**Prepared hotfix: Alpha 1.0.1**, internal mod version **0.18.28**.
+This hotfix has not been published by this task; Alpha 1.0.0 remains unchanged.
+It fixes native installation on Steam's bundled Java 25.0.1, which lacks
+`java.logging`. Optional Win32/JNA input now falls back to the game's own input
+without aborting 3D initialization. Liftoff inspired the FPV concept;
 its code/assets are not included, it is not required, and this is not a validated
 Melty two-game mashup.
 
@@ -29,43 +32,49 @@ not every native/custom rendering or combat pattern is converted identically.
 
 ## Requirements
 
-The verified setup is **64-bit Windows desktop, Mindustry 160.7, and a complete
-64-bit Java 17 runtime/JDK**, including `java.logging`, with an OpenGL-capable GPU.
+The verified setup is **64-bit Windows desktop, Mindustry 160.7**, with an
+OpenGL-capable GPU. Its standard Steam bundled **Java 25.0.1** can load this hotfix
+directly; installing a separate JDK or running PowerShell is not required.
 Metadata allows 160.5+, but other versions are not certified by this Alpha pass.
-The tested Steam installation's stripped bundled runtime is insufficient for
-the JNA mouse bridge: this is not a stock-runtime drop-in mod.
+When a complete Java runtime provides `java.logging`, the existing Win32/JNA
+mouse bridge remains available. A full JDK 17 is needed only to build from source.
 
 **Fullscreen is strongly recommended.** Android, Linux/macOS, hardware FPV
 controllers and independent dedicated-server packages are unverified.
 Bundled JNA native libraries do not imply support for every platform.
 
-## Installation (Windows Alpha bundle)
+## Installation — native Mindustry Import Mod
 
-1. Back up saves. Extract the **Alpha ZIP**, not the entire development folder.
-   Keep its license/notice files with the JAR. Choose a writable folder with space.
-2. Install complete 64-bit Java 17 and keep your own Mindustry/Steam installation.
-3. Open PowerShell in the extracted folder and use your own paths:
+1. Back up saves and download **`mindustry-fpv-0.18.28.jar`**.
+2. Launch Mindustry normally through Steam. Open **Mods → Import Mod → Import File**
+   and select that JAR. Accept replacement of the previous Mindustry FPV version
+   if updating; do not keep duplicate copies enabled.
+3. Close/restart the game as requested, then launch it normally through Steam again.
+4. **Enable Fullscreen in native graphics settings**. Start a map/save and press
+   **F5** to switch 2D ↔ FPV/3D. **Tab** opens the existing Build Mode.
 
-   ```powershell
-   powershell.exe -NoProfile -ExecutionPolicy Bypass -File .\Launch-Alpha.ps1 `
-     -GameDir 'E:\SteamLibrary\steamapps\common\Mindustry' `
-     -JavaHome 'E:\Tools\jdk-17'
-   ```
+Do not import the source ZIP or whole repository as a mod. The JAR embeds GPL,
+JNA/libffi license texts and third-party notices. Matching source is distributed
+separately as `mindustry-fpv-0.18.28-corresponding-source.zip`.
 
-   The launcher verifies the JAR/runtime and creates a separate `alpha-profile`
-   beside itself. It does not replace the game's runtime or ordinary saves.
-   Optional `-ProfileDirectory 'E:\Games\Mindustry-Alpha-Profile'` changes the
-   profile location. Keep Steam running if your installed host needs it.
-4. **Enable Fullscreen in native graphics settings**. Start a fresh map/save.
-   Press **F5** to switch 2D ↔ FPV/3D.
+The older `Play-*`, `Launch-Alpha.ps1` and profiling scripts retain their historical
+paths/version requirements for Alpha 1.0.0. They are not needed for this hotfix's
+native installation. Do not run the old `prepare-alpha.py` in the history-free
+public repository to recreate historical artifacts.
 
-If your existing launcher already uses complete Java 17, import only
-`mindustry-fpv-0.18.27.jar` through **Mods → Import Mod**, restart, and ensure
-only one mod version is enabled. Do not import the Alpha/source ZIP as a mod.
-Native Steam startup may still use its stripped runtime.
+### Mouse behavior on the stock Steam runtime
 
-The repository's older `Play-*`/profiling scripts have machine-specific paths;
-use the public Alpha launcher instead. It does not force fullscreen settings.
+The host-input fallback keeps the cursor **visible**, samples actual movement
+inside the game window and releases its logical flight input on focus loss,
+menus, pause and Build Mode. It cannot warp/center or confine the OS cursor;
+ordinary mouse look is bounded by the window edges.
+
+Use **arrow keys** for continuous aiming at an edge. In Stabilized/ground modes,
+left/right turn the view and up/down change vertical aim. In Acro they preserve
+the existing pitch/roll alternatives; A/D still yaw. WASD, firing, mining, F5,
+F7, Tab, building and command interactions keep their existing roles.
+The HUD indicates host mouse input. Complete Java installations retain the
+original captured/hidden/recentered native mouse behavior.
 
 ## Controls (defaults)
 
@@ -140,22 +149,23 @@ log excerpt. Remove usernames, IPs, private paths and tokens before sharing.
 
 ## Release verification and source
 
-Tested JAR: `mindustry-fpv-0.18.27.jar`, **4,140,308 bytes**, SHA-256:
+Hotfix JAR: **0.18.28**. Exact checksums and validation scope are in
+[hotfix notes](docs/releases/ALPHA-1.0.1-HOTFIX.md) and the prepared `SHA256SUMS.txt`.
+The corresponding-source archive identifies its exact public-repository checkpoint.
+Current source retains opt-in diagnostics from the release snapshot; no legacy
+compiled helper is carried into a clean hotfix build.
 
-```text
-d4f136ab7803966970ab50ef0d0150d895514aebff26dd343bd674c729582bc0
-```
+The owner confirmed a real **Steam Import File → restart through Steam → F5/Tab**
+test, and the runtime log confirms successful initialization on Java 25.0.1.
+Input regression tests run on both bundled Steam Java and full Java 17.
+Physical/native mouse capture, controller hardware and multiplayer verification
+limits are reported explicitly in the hotfix notes.
 
-Gameplay source: `556df2a8f2f3a7dc8dac2392bc825c39235c8cb5`. The release branch
-is based on `e60f1fb`, additionally containing the local fullscreen startup fix
-and optional diagnostics absent from the unchanged tested JAR. Rebuild from the
-dedicated corresponding-source ZIP, not the automatic current-branch archive.
-
-[Build guide](docs/releases/BUILDING.md) · [Release notes](docs/releases/ALPHA-1.0.0.md) ·
-[Publication audit](docs/releases/PUBLICATION-READINESS.md).
-Prior development checks included 107 passing Java test programs and targeted
-native-game/GPU/save tests. Packaging checks are reported separately and do not
-substitute for new independent gameplay tests.
+[Hotfix build guide](docs/releases/BUILDING-HOTFIX.md).
+Historical [Alpha 1.0.0 notes](docs/releases/ALPHA-1.0.0.md),
+[source provenance](docs/releases/BUILDING.md) and
+[publication audit](docs/releases/PUBLICATION-READINESS.md) remain unchanged and
+refer to the old accepted **0.18.27** binary, not this hotfix.
 
 ## License
 
@@ -164,6 +174,7 @@ Mindustry is by Anuken and contributors; Arc is Apache-2.0. Bundled JNA 5.19.1
 uses its Apache-2.0 option and includes libffi under its permission license.
 See [third-party notices](THIRD_PARTY_NOTICES.md).
 
-Publish the Alpha bundle **together with** the corresponding-source ZIP and
-licenses. No game binaries, Java runtime, profiles, saves, backups, raw recordings
+Publish the hotfix JAR **together with** its corresponding-source ZIP; license
+texts are embedded in the JAR and included with the source. No game binaries,
+Java runtime, profiles, saves, backups, raw recordings
 or proprietary Liftoff resources are included in the prepared assets.

@@ -2,7 +2,7 @@ name: mindustry-fpv
 displayName: Mindustry FPV
 author: Mindustry FPV project
 description: "3D FPV flight, spatial combat, layered construction and native upper-floor production. Matching-mod multiplayer with server authority. Mindustry 160.5 / 160.7. F5: view, F7: camera, F9: flight mode, Tab: Build."
-version: 0.18.27
+version: 0.18.28
 minGameVersion: 160.5
 java: true
 main: fpv.FpvMod

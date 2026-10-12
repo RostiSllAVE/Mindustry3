@@ -31,7 +31,8 @@ import fpv.generated.FlightProfiles;
 import fpv.generated.InputProfiles;
 import fpv.generated.RuntimeConfig;
 import fpv.input.FpvDesktopInput;
-import fpv.platform.WindowsFlightInput;
+import fpv.platform.FlightMouseInput;
+import fpv.platform.FlightMouseInputs;
 import fpv.render.FpvWorldRenderer;
 import fpv.render.SpriteExtrusionRenderer;
 import fpv.units.UnitAltitudeSystem;
@@ -97,7 +98,7 @@ public final class FpvMod extends Mod {
     private final FlightController.StepObserver flightCollision=(state,ox,oy,oz,seconds,elapsed)->collide(ox,oy,oz,seconds,true,elapsed);
     FpvDesktopInput input;
     SimulationClock clock;
-    WindowsFlightInput mouse;
+    FlightMouseInput mouse;
     boolean enabled, buildMode, ready, pausedBeforeBuild, buildOwnsPause;
     boolean disposed;
     int unitId = -1;
@@ -132,7 +133,7 @@ public final class FpvMod extends Mod {
             var nativeDir = Vars.tmpDirectory.child("fpv-native");
             nativeDir.mkdirs();
             System.setProperty("jna.tmpdir", nativeDir.absolutePath());
-            mouse = new WindowsFlightInput();
+            mouse = FlightMouseInputs.create(Core.input);
             input = new FpvDesktopInput(Core.input, InputProfiles.create());
             input.setMovementOwnedSupplier(()->network!=null&&(network.controlsLocalFlight()||
                 Vars.player!=null&&Vars.player.unit()!=null&&(network.creatorFlight().active(Vars.player.unit())||network.nativeBoost().active(Vars.player.unit()))));
@@ -246,7 +247,8 @@ public final class FpvMod extends Mod {
                 else if (smokeMode) {smoke = new SmokeHarness(this); Core.app.post(smoke::start);}
             });
             Core.app.addListener(new ApplicationListener(){
-                @Override public void pause(){if(mouse!=null)mouse.setCaptured(false);}
+                @Override public void pause(){if(mouse!=null)mouse.pause();restoreCursor();}
+                @Override public void resume(){if(mouse!=null)mouse.resume();}
                 @Override public void dispose(){close();}
                 @Override public void exit(){if(mouse!=null)mouse.close();}
             });
@@ -414,7 +416,7 @@ public final class FpvMod extends Mod {
             public int buildTimePercent(){return Vars.net.active()?100:RuntimeConfig.TIME_PERCENT[timeIndex];}
             public FlightController.State state(){return flight.state();}
             public Camera3D camera(){return camera;}
-            public String status(){String cameraFeedback=CameraView.feedback();return !cameraFeedback.isEmpty()?cameraFeedback:arc.util.Time.millis()<ramFeedbackUntil?ramFeedbackText:status;}
+            public String status(){String cameraFeedback=CameraView.feedback();String text=!cameraFeedback.isEmpty()?cameraFeedback:arc.util.Time.millis()<ramFeedbackUntil?ramFeedbackText:status;return mouse!=null&&!mouse.nativeCapture()?text+" / HOST MOUSE · arrows at edges":text;}
             public String skyClock(){return renderer3d.environment().clockLabel();}
             public String skyPhase(){return renderer3d.environment().phaseLabel();}
             public String flightMode(){return pilotModeLabel();}
@@ -509,6 +511,7 @@ public final class FpvMod extends Mod {
                 if(flightMode==1){
                     double look=NavigationConfig.FREELOOK_DEGREES_PER_PIXEL*Core.settings.getInt("fpv-mouse",100)/100.0;
                     freeLook.look(mouse.deltaX()*look,-mouse.deltaY()*look);
+                    fallbackLook(dt);
                     if(!bodyOwned)navigateStabilized(dt,down(KeyCode.w)-down(KeyCode.s),down(KeyCode.d)-down(KeyCode.a),
                         Math.max(down(KeyCode.e),down(KeyCode.pageUp))-Math.max(down(KeyCode.q),down(KeyCode.pageDown)));
                 }else{
@@ -576,6 +579,7 @@ public final class FpvMod extends Mod {
         if(!buildMode&&!commanding&&!suspended&&!Vars.state.isPaused()&&!smokeMode){
             double look=NavigationConfig.FREELOOK_DEGREES_PER_PIXEL*Core.settings.getInt("fpv-mouse",100)/100.0;
             freeLook.look(mouse.deltaX()*look,-mouse.deltaY()*look);
+            fallbackLook(dt);
         }
         if(!onlineFlight())copyGroundPose(unit);
         updateCamera();updatePick();var aim=controlledAim();
@@ -921,8 +925,12 @@ public final class FpvMod extends Mod {
         finally{fpv.profile.CameraPerformanceProfile.end(fpv.profile.CameraPerformanceProfile.Part.WORLD_RENDER,profiled);}
     }
 
+    private void fallbackLook(double dt){
+        if(!mouse.nativeCapture())freeLook.look((down(KeyCode.right)-down(KeyCode.left))*90*dt,(down(KeyCode.up)-down(KeyCode.down))*90*dt);
+    }
+
     private void afterUi() {
-        if(enabled&&ready&&!Vars.player.dead()&&!buildMode&&!input.commandActive()&&!inputSuspended&&!smokeMode&&!Vars.state.isPaused()&&mouse.captured()) {
+        if(enabled&&ready&&!Vars.player.dead()&&!buildMode&&!input.commandActive()&&!inputSuspended&&!smokeMode&&!Vars.state.isPaused()&&mouse.captured()&&mouse.nativeCapture()) {
             if(hiddenCursor==null){Pixmap empty=new Pixmap(1,1);hiddenCursor=Core.graphics.newCursor(empty,0,0);empty.dispose();}
             Core.graphics.cursor(hiddenCursor);
             cursorHidden=true;

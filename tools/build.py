@@ -5,6 +5,7 @@ import os
 import re
 from pathlib import Path
 import subprocess
+import shutil
 import sys
 import zipfile
 from preflight import ROOT, run
@@ -18,6 +19,11 @@ for path in (jdk / "bin/javac.exe", host, jna):
         raise SystemExit(f"Missing required local dependency: {path}")
 build = ROOT / "build"
 classes = build / "classes"
+# Build output is owned by this tool; remove stale classes before compiling a new version.
+if classes.exists():
+    if classes.is_symlink() or classes.resolve() != ROOT.resolve() / "build" / "classes":
+        raise SystemExit("Unexpected class-output location")
+    shutil.rmtree(classes)
 classes.mkdir(parents=True, exist_ok=True)
 sources = sorted((ROOT / "src/main/java").rglob("*.java")) + sorted((build / "generated").rglob("*.java"))
 args = ["--release", "17", "-encoding", "UTF-8", "-classpath", str(host) + os.pathsep + str(jna), "-d", str(classes)] + [str(p) for p in sources]
@@ -46,6 +52,8 @@ with zipfile.ZipFile(output, "w", zipfile.ZIP_DEFLATED) as z:
                 z.write(p, rel)
     for p in (ROOT / "licenses").glob("*.txt"):
         z.write(p, "licenses/" + p.name)
+    z.write(ROOT / "LICENSE", "LICENSE")
+    z.write(ROOT / "THIRD_PARTY_NOTICES.md", "THIRD_PARTY_NOTICES.md")
     # Include only the redistributable dependency. The player's game JAR is compile-only.
     with zipfile.ZipFile(jna) as dep:
         for entry in dep.infolist():

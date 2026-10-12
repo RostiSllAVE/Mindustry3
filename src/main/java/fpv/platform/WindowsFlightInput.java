@@ -18,7 +18,7 @@ import java.util.Locale;
  * <p>This is cursor recentering, not raw mouse input. Pointer acceleration and
  * screen-coordinate DPI behavior remain relevant to sensitivity.</p>
  */
-public final class WindowsFlightInput implements AutoCloseable {
+public final class WindowsFlightInput implements FlightMouseInput {
     /** JNA core definitions, deliberately independent of jna-platform and AWT. */
     public interface User32 extends StdCallLibrary {
         Pointer GetForegroundWindow();

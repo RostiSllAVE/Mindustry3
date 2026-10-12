@@ -44,10 +44,13 @@ Red Hat, Inc. and others, under its MIT-style permission license. Full notice:
 [licenses/LIBFFI-LICENSE.txt](licenses/LIBFFI-LICENSE.txt).
 [Matching upstream native source](https://github.com/java-native-access/jna/tree/5.19.1/native/libffi).
 
-The tested mod JAR predates this release paperwork. It already includes the
+The historical **0.18.27 Alpha 1.0.0** JAR predates this release paperwork. It includes the
 JNA dual-license and Apache texts, but does not include the new GPL/libffi
-paperwork. Distribute it with the prepared Alpha ZIP and corresponding-source
+paperwork. Distribute that old version with its prepared Alpha ZIP and corresponding-source
 ZIP, which contain these notices, rather than offering that historical JAR alone.
+The **0.18.28 Alpha 1.0.1 hotfix** embeds the GPL and all listed dependency license
+texts and these notices directly in its importable JAR. It still requires its own
+matching corresponding-source archive when distributed.
 
 ## Liftoff, Melty and external tools
 
@@ -62,7 +65,15 @@ profiling recordings are not part of the user download.
 
 ## Corresponding source
 
-Publish `mindustry-fpv-0.18.27-corresponding-source.zip` alongside the Alpha
+For **0.18.28**, publish `mindustry-fpv-0.18.28-corresponding-source.zip` alongside
+the hotfix JAR. It contains the hotfix's exact source/tests/design/build scripts,
+GPL/dependency notices and public Git checkpoint. Full Java 17 is required for
+building; users can import the JAR with the stock Steam runtime. Host SDL APIs
+provide the fallback input; they are not copied into the mod. No new binary
+dependency or proprietary runtime is introduced by the hotfix.
+
+For the historical **0.18.27** release, publish its original
+`mindustry-fpv-0.18.27-corresponding-source.zip` alongside the Alpha
 download, at no extra charge. It contains the exact mod source/design/build
 scripts at commit `556df2a8f2f3a7dc8dac2392bc825c39235c8cb5`, release instructions,
 licenses and the documented source for one legacy residual helper class.

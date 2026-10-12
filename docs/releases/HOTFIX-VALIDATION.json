@@ -1,0 +1,24 @@
+{
+  "date": "2026-10-12",
+  "version": "0.18.28",
+  "label": "Alpha 1.0.1 native-import hotfix",
+  "publishedByThisTask": false,
+  "finalJar": {"bytes": 4184797, "sha256": "aa350793618674349c9b6d99784e365838d5b119227fd4d086f0174a916b1a82"},
+  "nativeWorkflow": {
+    "status": "PASS — owner-confirmed actual Import File and Steam restart",
+    "runtime": "Steam bundled Java 25.0.1",
+    "game": "160.7",
+    "confirmedActions": ["Import File", "replace previous mod", "normal Steam restart", "F5", "Tab Build Mode"],
+    "logConfirms": ["missing logging detected before JNA construction", "host input fallback selected", "full mod initialized", "network initialized", "2D/3D transitions"],
+    "candidateSha256": "ccbb20846e3ccc992fa62dc44c500154a4a21e6d96fbf1574ee8709162b07551",
+    "finalExecutableResourcesAndDesignEqualToCandidate": true,
+    "differentPayloadEntries": ["THIRD_PARTY_NOTICES.md"],
+    "agentAutomatedTheImportDialog": false
+  },
+  "java17": {"testProgramsPassed": 109, "nativeBackendInitialized": true, "nativeSDLRegressionPassed": true},
+  "steamJava25": {"modules": ["java.base", "jdk.unsupported"], "loggingAvailable": false, "testProgramsPassed": 109, "fallbackBackendInitialized": true, "nativeSDLRegressionPassed": true},
+  "eachRuntimeNativeChecks": {"layerFixture": 209, "cameraModes": 685, "groundEye": 37, "placementLifecycle": 48, "automaticPlacement": 37, "automaticPlacementGPU": 13, "mouseInteraction": 26, "mouseInteractionGPU": 6, "schematics": 38, "unitCommands": 40, "firstPersonGPU": 83, "mining": 20, "laserGPU": 10, "healingAndCombatVFX": 18, "constructionGPU": 9, "displayGPU": 7, "saveLoad": "PASS", "newOpenGLErrors": 0},
+  "priorAlphaArtifactsChanged": false,
+  "limitations": ["Bounded visible mouse on fallback; no OS cursor warp/confinement", "Native physical capture/DPI/Alt-Tab not newly human-tested on Java17", "Independent multiplayer and controller hardware not tested", "Previously disclosed broad Flare +85 pitch failure outside scope"],
+  "evidence": "Raw logs, isolated fixture results and candidate/final comparison remain in ignored local; no private Steam IDs/logs are distributed."
+}
