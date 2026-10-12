@@ -7,7 +7,7 @@ adds FPV flight and spatial combat, and extends construction across elevated
 floors. This is not an official Mindustry release or a standalone game.
 
 **Prepared release: Alpha 1.0.0.** The tested mod's internal version remains
-**0.18.27**. Nothing has been published yet. Liftoff inspired the FPV concept;
+**0.18.27**. The first public Alpha is now available through GitHub Releases. This is an experimental build with known bugs and incomplete features. Liftoff inspired the FPV concept;
 its code/assets are not included, it is not required, and this is not a validated
 Melty two-game mashup.
 
