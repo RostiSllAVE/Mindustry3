@@ -2,7 +2,9 @@ param(
     [Parameter(Mandatory=$true)][string]$Run,
     [Parameter(Mandatory=$true)][string]$JavaHome,
     [string]$GameDir='D:\SteamLibrary\steamapps\common\Mindustry',
-    [switch]$ForceArc
+    [switch]$ForceArc,
+    # Match the stock Steam launcher on Java 22+. Do not use on Java 17.
+    [switch]$ForeignAccess
 )
 $ErrorActionPreference='Stop'
 if($Run -notmatch '^[a-z0-9-]+$'){throw 'Simple unique test run ID required'}
@@ -20,6 +22,7 @@ Copy-Item -LiteralPath $jar -Destination "$lab\saves\mods\mindustry-fpv.jar"
 Set-Content -LiteralPath "$lab\steam_appid.txt" -Value '1127400' -Encoding ascii
 $arguments=@('-Dnodiscord=true',('-Djava.io.tmpdir="'+$lab+'\tmp"'),('-Djava.library.path="'+$GameDir+'"'),('-Dmindustry.data.dir="'+$lab+'\saves"'),('-Dfpv.lab.path="'+$lab+'"'),'-Dfpv.smoke=true','-Dfpv.layers.smoke=true','-Dfpv.mouse.smoke=true','-Dfpv.placement.smoke=true',('-Dfpv.smoke.output="'+$output+'"'),'-cp',('"'+$hostJar+'"'),'mindustry.desktop.DesktopLauncher','-width','1280','-height','800','-maximized','false')
 if($ForceArc){$arguments=@('-Dfpv.input.forceArc=true')+$arguments}
+if($ForeignAccess){$arguments=@('--enable-native-access=ALL-UNNAMED')+$arguments}
 $process=Start-Process -FilePath $java -ArgumentList $arguments -WorkingDirectory $lab -WindowStyle Hidden -PassThru -RedirectStandardOutput "$output\stdout.log" -RedirectStandardError "$output\stderr.log"
 @{pid=$process.Id;java=$java;version=$version;forceArc=[bool]$ForceArc;jarSha256=(Get-FileHash -LiteralPath $jar).Hash.ToLowerInvariant();profile=$lab} | ConvertTo-Json | Set-Content "$output\process.json"
 Write-Output "Isolated native-game regression started: $Run, PID $($process.Id)"

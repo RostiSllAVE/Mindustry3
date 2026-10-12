@@ -1,0 +1,35 @@
+{
+  "version": "0.18.29",
+  "jarSha256": "ca38dda1c0e4eac09247cb8bb38ce0471a22bf73b0c02ee5004fcadea83fe8f4",
+  "stockSteamJava25": {
+    "testPrograms": 111,
+    "failures": 0,
+    "missingJavaLogging": true,
+    "realWin32ReadonlyQueries": "passed",
+    "deniedNativeAccess": "isolated unavailable"
+  },
+  "completeJava17": {
+    "existingTestPrograms": 109,
+    "addedTestPrograms": 2,
+    "failures": 0
+  },
+  "captureLifecycleChecks": 218,
+  "nativeGameRegressions": {
+    "steam25-capture-v2": {
+      "runStatus": "passed",
+      "backend": "FFM",
+      "gameErrors": 0,
+      "glErrors": null
+    },
+    "full17-capture-v2": {
+      "runStatus": "passed",
+      "backend": "JNA",
+      "gameErrors": 0,
+      "glErrors": null
+    }
+  },
+  "physicalSteamImportAndCapture": "pending owner verification",
+  "inputKind": "foreground client-area clip and recenter; not raw HID",
+  "scope": "Windows input only; gameplay and network protocols unchanged",
+  "olderReleaseAssets": "all snapshotted hashes unchanged"
+}

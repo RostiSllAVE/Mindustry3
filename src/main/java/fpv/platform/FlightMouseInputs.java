@@ -14,7 +14,11 @@ public final class FlightMouseInputs {
         boolean windows=System.getProperty("os.name","").startsWith("Windows");
         boolean forced=Boolean.getBoolean("fpv.input.forceArc");
         String reason=forced?"host input explicitly selected":!windows?"Win32 input is unavailable on this platform":"java.logging is absent from this runtime";
-        return new OptionalFlightInput(windows&&logging&&!forced,reason,WindowsFlightInput::new,
+        return new OptionalFlightInput(windows&&!forced,reason,()->{
+                if(logging){Log.info("[FPV] Mouse capture: Win32 / JNA");return new WindowsFlightInput();}
+                FlightMouseInput nativeInput=new ForeignWindowsInput();
+                Log.info("[FPV] Mouse capture: Win32 / java.base FFM");return nativeInput;
+            },
             ()->new ArcFlightInput(input,FlightMouseInputs::hostFocused,()->Core.graphics.getWidth(),()->Core.graphics.getHeight()),
             message->Log.warn("[FPV] Optional native mouse input unavailable (@). Host input remains active: visible cursor, bounded mouse movement; arrow keys continue aiming.",message));
     }

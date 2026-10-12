@@ -6,6 +6,12 @@ An **experimental, unofficial fan-made mod** that presents Mindustry in 3D,
 adds FPV flight and spatial combat, and extends construction across elevated
 floors. This is not an official Mindustry release or a standalone game.
 
+**Local follow-up candidate: 0.18.29**, not uploaded by this task. It adds
+captured/recentered mouse input on stock 64-bit Windows Steam Java 25 without
+JNA or extra Java modules. See [mouse-capture notes](docs/releases/MOUSE-CAPTURE-0.18.29.md)
+for verification status and limitations. The Alpha 1.0.1 installation details
+below describe 0.18.28; import `mindustry-fpv-0.18.29.jar` to test this candidate.
+
 **Prepared hotfix: Alpha 1.0.1**, internal mod version **0.18.28**. The first public Alpha remains **0.18.27** / Alpha 1.0.0 and is available through GitHub Releases (https://github.com/RostiSllAVE/Mindustry3/releases/tag/v1.0.0-alpha.1). This hotfix has not been published by this task; Alpha 1.0.0 remains the public release. It fixes native installation on Steam's bundled Java 25.0.1, which lacks `java.logging`. Optional Win32/JNA input now falls back to the game's own input without aborting 3D initialization. Liftoff inspired the FPV concept;
 its code/assets are not included, it is not required, and this is not a validated
 Melty two-game mashup.
@@ -85,7 +91,7 @@ paths/version requirements for Alpha 1.0.0. They are not needed for this hotfix'
 native installation. Do not run the old `prepare-alpha.py` in the history-free
 public repository to recreate historical artifacts.
 
-### Mouse behavior on the stock Steam runtime
+### Mouse behavior in Alpha 1.0.1 (0.18.28)
 
 The host-input fallback keeps the cursor **visible**, samples actual movement
 inside the game window and releases its logical flight input on focus loss,
