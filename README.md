@@ -1,4 +1,4 @@
-# Mindustry³ / Mindustry FPV — First Public Alpha
+# Mindustry³ / Mindustry 3D FPV — First Public Alpha
 
 (Hello! before you read that repository i want to let you know that that project 99% vibe-coded but tested by human, i mean by me😁. That is actually my first project and i am new on GitHub as creator. In a few days i will publish an YouTube channel where i show how that mod works. Hope you will have fun with this mod!)
 
