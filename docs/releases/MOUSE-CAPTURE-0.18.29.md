@@ -51,9 +51,14 @@ No combat, movement, construction or multiplayer protocol changes are included.
   save/load. Java 25 logged `Win32 / java.base FFM`; Java 17 logged `Win32 / JNA`.
   No new game errors or GL errors. These are scripted game-API checks, not
   physical mouse input tests.
-- Physical Steam import/restart, continuous look, hide/confine, Build/menu and
-  Alt+Tab checks: **pending owner verification**. Desktop automation could see
-  the menu and hover controls but injected clicks did not open them.
+- Physical stock Steam import/restart and FPV capture/Build release: **confirmed
+  by the owner** with this exact JAR. The owner reports correct capture while
+  controlling a unit and a freely moving cursor in Tab/Build Mode. Desktop
+  automation could see the menu and hover controls but could not open them.
+  Continuous rotations, cursor hiding, menu release and Alt+Tab/return were
+  requested, but were not separately described in the response; those specific
+  physical cases remain unverified. Lifecycle tests cover their release/restore
+  paths without claiming a human hardware test.
 - Old Alpha release hashes unchanged. Initial sandboxed game runs failed to
   open the networking selector because loopback was restricted; reruns outside
   that restriction passed. This was not a mod initialization failure.

@@ -28,7 +28,8 @@
       "glErrors": null
     }
   },
-  "physicalSteamImportAndCapture": "pending owner verification",
+  "physicalSteamImportAndCapture": "owner confirmed correct FPV unit capture and free cursor in Tab/Build Mode after requested native import/restart",
+  "physicalCasesNotIndividuallyConfirmed": ["continuous repeated rotations", "cursor hiding", "menu release", "Alt+Tab and return"],
   "inputKind": "foreground client-area clip and recenter; not raw HID",
   "scope": "Windows input only; gameplay and network protocols unchanged",
   "olderReleaseAssets": "all snapshotted hashes unchanged"
