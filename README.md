@@ -1,16 +1,39 @@
-# Mindustry³ / Mindustry FPV — Alpha 1.0.1 Hotfix
+# Mindustry³ / Mindustry 3D FPV — Alpha 1.0.1 Hotfix
+
+(Hello! before you read that repository i want to let you know that that project 99% vibe-coded but tested by human, i mean by me😁. That is actually my first project and i am new on GitHub as creator. In a few days i will publish an YouTube channel where i show how that mod works. Hope you will have fun with this mod!)
 
 An **experimental, unofficial fan-made mod** that presents Mindustry in 3D,
 adds FPV flight and spatial combat, and extends construction across elevated
 floors. This is not an official Mindustry release or a standalone game.
 
-**Prepared hotfix: Alpha 1.0.1**, internal mod version **0.18.28**.
-This hotfix has not been published by this task; Alpha 1.0.0 remains unchanged.
-It fixes native installation on Steam's bundled Java 25.0.1, which lacks
-`java.logging`. Optional Win32/JNA input now falls back to the game's own input
-without aborting 3D initialization. Liftoff inspired the FPV concept;
+**Prepared hotfix: Alpha 1.0.1**, internal mod version **0.18.28**. The first public Alpha remains **0.18.27** / Alpha 1.0.0 and is available through GitHub Releases (https://github.com/RostiSllAVE/Mindustry3/releases/tag/v1.0.0-alpha.1). This hotfix has not been published by this task; Alpha 1.0.0 remains the public release. It fixes native installation on Steam's bundled Java 25.0.1, which lacks `java.logging`. Optional Win32/JNA input now falls back to the game's own input without aborting 3D initialization. Liftoff inspired the FPV concept;
 its code/assets are not included, it is not required, and this is not a validated
 Melty two-game mashup.
+
+Screenshots of units and blocks:
+<img width="2559" height="1438" alt="Screenshot 2026-10-12 153603" src="https://github.com/user-attachments/assets/749e0b75-2755-4255-9a84-558c8c6b76b0" />
+<img width="2559" height="1438" alt="Screenshot 2026-10-12 153619" src="https://github.com/user-attachments/assets/12860a82-85ac-4670-8a8b-5698bb56bdc1" />
+<img width="2096" height="1131" alt="Screenshot 2026-10-12 153630" src="https://github.com/user-attachments/assets/55b1499c-bf72-4fb0-80fc-6e24b27295fc" />
+<img width="2559" height="1439" alt="Screenshot 2026-10-12 153708" src="https://github.com/user-attachments/assets/83502b87-9c29-4251-a6c2-3cec2dd74133" />
+<img width="2559" height="1438" alt="Screenshot 2026-10-10 221302" src="https://github.com/user-attachments/assets/d6e88f74-8123-4914-a27e-8893474740e4" />
+<img width="1296" height="986" alt="Screenshot 2026-10-11 183228" src="https://github.com/user-attachments/assets/584fef0f-7781-4fb7-ad24-8fb68cdaaaed" />
+<img width="1623" height="1143" alt="Screenshot 2026-10-12 033826" src="https://github.com/user-attachments/assets/6a46c436-83ea-49cc-86f0-14134d73203c" />
+<img width="975" height="912" alt="Screenshot 2026-10-11 214423" src="https://github.com/user-attachments/assets/cfba6d7d-cfa7-4c07-8d6b-fe38f8b10bed" />
+<img width="644" height="628" alt="Screenshot 2026-10-10 002310" src="https://github.com/user-attachments/assets/a4a603a8-01b2-4bfc-b422-be05ec4f8ede" />
+<img width="657" height="588" alt="Screenshot 2026-10-10 002330" src="https://github.com/user-attachments/assets/9200de68-d082-4612-b17a-21f4228d2c71" />
+
+Gameplay:
+<img width="2559" height="1439" alt="image" src="https://github.com/user-attachments/assets/8eab8167-c90a-42bc-932b-940f30dda5ba" />
+<img width="2559" height="1439" alt="image" src="https://github.com/user-attachments/assets/b69577ca-817f-4288-a162-744b45ede15f" />
+<img width="2559" height="1438" alt="image" src="https://github.com/user-attachments/assets/26d28a29-7eb7-4ce0-aac9-ad6fdbcc3833" />
+<img width="2559" height="1438" alt="image" src="https://github.com/user-attachments/assets/19c7371c-2ebb-4fde-8727-d598fcab6010" />
+<img width="2559" height="1439" alt="image" src="https://github.com/user-attachments/assets/ae4273b6-ac09-4766-98ec-f8627b8cb2c3" />
+<img width="1119" height="637" alt="image" src="https://github.com/user-attachments/assets/38d28bca-9ae0-470b-969c-f242f7dab501" />
+<img width="2559" height="1439" alt="image" src="https://github.com/user-attachments/assets/25938db9-d63b-43d4-8d26-7f26628f09e9" />
+<img width="2559" height="1439" alt="image" src="https://github.com/user-attachments/assets/52a22511-fff0-452e-91a0-4455287e8242" />
+<img width="2559" height="1439" alt="image" src="https://github.com/user-attachments/assets/4aaed243-bbc3-4352-93cd-7684638aca26" />
+<img width="2559" height="1439" alt="image" src="https://github.com/user-attachments/assets/a3d76fb6-e36b-4b01-a1e6-bdce364c25d6" />
+<img width="2559" height="1439" alt="image" src="https://github.com/user-attachments/assets/a1a68326-d01f-4a22-be26-1b364d8d07a5" />
 
 ## Features
 
